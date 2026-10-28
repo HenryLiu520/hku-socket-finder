@@ -22,6 +22,8 @@
       <span v-if="counts.stale" class="stat c-amber"><b>{{ counts.stale }}</b> old</span>
     </div>
 
+    <RoomMap :seats="room.seats" @pick="open" />
+
     <div class="bar">
       <el-radio-group v-model="filter" size="small">
         <el-radio-button value="all">All</el-radio-button>
@@ -94,6 +96,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import api, { errorText } from '../api'
+import RoomMap from '../components/RoomMap.vue'
 
 const route = useRoute()
 const room = ref({ seats: [] })

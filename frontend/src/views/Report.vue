@@ -37,18 +37,7 @@
       <div class="step">
         <label><b>3</b> Socket <span class="sf-muted small">— tap one, or type the number</span></label>
 
-        <div v-if="socketOptions.length" class="chips">
-          <button
-            v-for="s in socketOptions"
-            :key="s.code"
-            class="chip"
-            :class="['st-' + s.state.toLowerCase(), { on: s.code === socketCode }]"
-            @click="pick(s)"
-          >
-            <b>{{ tail(s.code) }}</b>
-            <span>{{ word(s.state) }}</span>
-          </button>
-        </div>
+        <RoomMap v-if="roomSeats.length" flat :seats="roomSeats" @pick="pick" />
 
         <el-input
           v-model="socketCode"
@@ -97,12 +86,14 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import api, { errorText } from '../api'
+import RoomMap from '../components/RoomMap.vue'
 
 const route = useRoute()
 
 const buildings = ref([])
 const rooms = ref([])
 const socketOptions = ref([])
+const roomSeats = ref([])
 
 const buildingId = ref(null)
 const roomId = ref(null)
@@ -133,10 +124,12 @@ async function onBuilding() {
 
 async function onRoom() {
   socketOptions.value = []
+  roomSeats.value = []
   socketCode.value = ''
   state.value = ''
   if (!roomId.value) return
   const { data } = await api.get('/rooms/' + roomId.value)
+  roomSeats.value = data.seats || []
   socketOptions.value = (data.seats || []).flatMap((seat) =>
     (seat.sockets || []).map((s) => ({ code: s.code, seat: seat.label, state: s.state, id: s.id }))
   )
