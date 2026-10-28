@@ -28,6 +28,7 @@ app:
   stale-days: 30
   reports-needed: 2
   report-window-hours: 24
+  reports-per-day: ${SF_REPORTS_PER_DAY:10}
 
 logging:
   level:

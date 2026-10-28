@@ -113,7 +113,8 @@ erDiagram
 | Rule | Where it lives | Behaviour |
 |---|---|---|
 | Two reports to flip | `SocketService.report` | Two **different** accounts, same state, within 24 hours |
-| One report per day | `SocketService.report` | Same account, same socket, second attempt returns HTTP 429 |
+| One report per socket per day | `SocketService.report` | Same account, same socket, second attempt returns HTTP 429 |
+| Ten reports per day | `SocketService.report` | Same account, eleventh socket of the day returns HTTP 429 `DAILY_CAP` |
 | Old checks look old | `Rules.isStale` | More than 30 days since the last check is flagged, never silently trusted |
 | Only staff close a repair | `SocketController.repair` | Role checked on the write, not in the interface |
 

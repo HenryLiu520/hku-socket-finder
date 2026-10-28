@@ -23,6 +23,7 @@ public class SocketService {
     @Value("${app.stale-days:30}") private int staleDays;
     @Value("${app.reports-needed:2}") private int reportsNeeded;
     @Value("${app.report-window-hours:24}") private int windowHours;
+    @Value("${app.reports-per-day:10}") private int reportsPerDay;
 
     public SocketService(SocketRepository sockets, ReportRepository reports, RepairRepository repairs) {
         this.sockets = sockets;
@@ -56,6 +57,11 @@ public class SocketService {
         long mine = reports.countBySocketIdAndAccountIdAndCreatedAtAfter(socketId, account.id, now.minusHours(windowHours));
         if (mine > 0) {
             throw new ApiException("TOO_SOON", "You already reported this socket today", 429);
+        }
+
+        long today = reports.countByAccountIdAndCreatedAtAfter(account.id, java.time.LocalDate.now().atStartOfDay());
+        if (Rules.overDailyQuota(today, reportsPerDay)) {
+            throw new ApiException("DAILY_CAP", "That is " + reportsPerDay + " reports today, come back tomorrow", 429);
         }
 
         Report r = new Report();

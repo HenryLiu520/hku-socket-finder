@@ -33,6 +33,13 @@ class RulesTest {
     }
 
     @Test
+    void tenReportsADayIsTheCeiling() {
+        assertFalse(Rules.overDailyQuota(9, 10));
+        assertTrue(Rules.overDailyQuota(10, 10));
+        assertTrue(Rules.overDailyQuota(11, 10));
+    }
+
+    @Test
     void daysSinceIsNullWhenNeverChecked() {
         assertNull(Rules.daysSince(null, now));
         assertEquals(5, Rules.daysSince(now.minusDays(5), now));

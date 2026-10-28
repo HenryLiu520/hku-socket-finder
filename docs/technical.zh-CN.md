@@ -111,7 +111,8 @@ erDiagram
 | 规则 | 写在哪 | 行为 |
 |---|---|---|
 | 两个人才翻转 | `SocketService.report` | 24 小时内两个**不同**账号报同一状态 |
-| 每账号每天一次 | `SocketService.report` | 同账号同插座再报一次返回 HTTP 429 |
+| 每帐号每插座每天一次 | `SocketService.report` | 同账号同插座再报一次返回 HTTP 429 |
+| 每账号每天最多 10 次 | `SocketService.report` | 同账号当天的第 11 支插座返回 HTTP 429 `DAILY_CAP` |
 | 旧的要看得出来旧 | `Rules.isStale` | 距上次核查超过 30 天就标记，绝不默认它是新的 |
 | 只有维护能结案 | `SocketController.repair` | 角色在写入时校验，不是靠界面藏按钮 |
 

@@ -24,6 +24,15 @@ public final class Rules {
         return Duration.between(lastChecked, now).toDays();
     }
 
+    /**
+     * One report per account per socket per window, and a ceiling per account per day.
+     * The per-socket rule stops one person flipping a socket alone; the daily cap stops
+     * someone sweeping a whole floor in an hour.
+     */
+    public static boolean overDailyQuota(long reportsToday, int cap) {
+        return reportsToday >= cap;
+    }
+
     /** One report per account per socket per window. */
     public static boolean alreadyReported(LocalDateTime lastReportAt, LocalDateTime now, int windowHours) {
         if (lastReportAt == null) return false;

@@ -116,7 +116,9 @@ to see a flip.
 
 - **Two reports flip a socket.** Two different accounts, same state, within 24 hours. One report on its
   own is stored and shown as unconfirmed.
-- **One report per account per socket per day.** A second attempt returns HTTP 429.
+- **One report per account per socket per day, ten per account per day.** The per-socket rule stops
+  one person flipping a socket alone; the daily ceiling stops one person sweeping a whole floor. Both
+  return HTTP 429 when exceeded.
 - **Old checks are labelled old.** Anything past 30 days is flagged in the interface instead of being
   trusted as fresh.
 - **Only maintenance can close a repair.** A repair sets the state to `REPAIRED` and stamps the time,

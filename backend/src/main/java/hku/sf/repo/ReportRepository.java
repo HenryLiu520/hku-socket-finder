@@ -11,6 +11,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     long countBySocketIdAndAccountIdAndCreatedAtAfter(Long socketId, Long accountId, LocalDateTime since);
 
+    long countByAccountIdAndCreatedAtAfter(Long accountId, LocalDateTime since);
+
     @Query("""
            select count(distinct r.account.id) from Report r
            where r.socket.id = :socketId and r.reportedState = :state and r.createdAt > :since
