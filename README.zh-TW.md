@@ -71,6 +71,10 @@ open http://localhost:5175
 埠號和帳號都是環境變數，有可用的預設值：`SF_DB_URL`、`SF_DB_USER`、`SF_DB_PASSWORD`、`SF_BIND`、`SF_PORT`、`SF_WEB_PORT`。
 
 停止用 `./scripts/stop-all.sh`。
+## 部署文件
+
+環境變數分別管什麼、資料庫怎麼備份、容器起不來先看哪裡：[English](docs/deployment.md) · [简体中文](docs/deployment.zh-CN.md) · [繁體中文](docs/deployment.zh-TW.md)。
+
 ## 示範帳號（密碼都是 `demo1234`）
 
 | 電郵 | 角色 | 用途 |

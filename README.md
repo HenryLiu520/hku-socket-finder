@@ -71,6 +71,10 @@ open http://localhost:5175
 Ports and credentials are environment variables with working defaults: `SF_DB_URL`, `SF_DB_USER`, `SF_DB_PASSWORD`, `SF_BIND`, `SF_PORT`, `SF_WEB_PORT`.
 
 Stop everything with `./scripts/stop-all.sh`.
+## Deployment
+
+What the environment variables do, how to back the database up, and what to check when a container does not come up: [English](docs/deployment.md) · [简体中文](docs/deployment.zh-CN.md) · [繁體中文](docs/deployment.zh-TW.md).
+
 ## Demo accounts (password `demo1234`)
 
 | Email | Role | Why it exists |
