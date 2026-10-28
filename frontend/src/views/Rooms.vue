@@ -6,7 +6,7 @@
         <p class="sf-muted">Rooms are sorted by how much is wrong with them. Faulty sockets first.</p>
       </div>
       <div class="tools">
-        <el-input v-model="q" placeholder="Search a room, e.g. L1-B" clearable class="search" />
+        <el-input v-model="q" placeholder="Search a room, e.g. CW-L1-B" clearable class="search" />
       </div>
     </div>
 
@@ -110,7 +110,7 @@ async function loadBuilding() {
       const { data } = await api.get('/floors/' + f.id + '/rooms')
       const needle = q.value.trim().toLowerCase()
       const rooms = data
-        .filter((r) => !needle || (r.code + ' ' + r.name).toLowerCase().includes(needle))
+        .filter((r) => !needle || ((b.code + '-' + r.code + ' ' + r.name).toLowerCase().includes(needle)))
         .sort((a, b2) => score(b2) - score(a) || a.code.localeCompare(b2.code))
       out.push({ id: f.id, level: f.level, rooms })
     }

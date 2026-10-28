@@ -53,7 +53,7 @@
         <el-input
           v-model="socketCode"
           :disabled="!roomId"
-          :placeholder="roomId ? 'CW-L1-A-0002' : 'Pick a room first'"
+          :placeholder="roomId ? 'CW-L1-B-0001' : 'Pick a room first'"
           class="wide typed"
         />
 
