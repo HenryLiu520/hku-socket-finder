@@ -13,3 +13,8 @@ uploads/
 .DS_Store
 .idea/
 .vscode/
+
+# coursework documents from the group folder never go online
+*.docx
+*.pdf
+R21_*
