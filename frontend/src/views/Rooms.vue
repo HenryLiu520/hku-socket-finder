@@ -7,11 +7,27 @@
       </div>
       <div class="tools">
         <el-input v-model="q" placeholder="Search a room, e.g. L1-B" clearable class="search" />
-        <el-select v-if="buildings.length > 1" v-model="buildingId" class="pick" @change="loadBuilding">
-          <el-option v-for="b in buildings" :key="b.id" :label="b.code" :value="b.id" />
-        </el-select>
-        <span v-else class="bname">{{ currentBuilding ? currentBuilding.code : '' }}</span>
       </div>
+    </div>
+
+    <div class="step">
+      <span class="step-label">1 · Building</span>
+      <div class="tabs">
+        <button
+          v-for="b in buildings"
+          :key="b.id"
+          class="tab"
+          :class="{ on: b.id === buildingId }"
+          @click="choose(b.id)"
+        >
+          <b>{{ b.code }}</b>
+          <span>{{ b.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-label">2 · Room</span>
     </div>
 
     <div v-loading="loading">
@@ -78,6 +94,12 @@ function ago(t) {
 
 const score = (r) => r.noPower * 3 + r.loose * 2 + r.broken * 3 - r.working
 
+function choose(id) {
+  if (id === buildingId.value) return
+  buildingId.value = id
+  loadBuilding()
+}
+
 async function loadBuilding() {
   loading.value = true
   try {
@@ -123,8 +145,15 @@ onMounted(async () => {
 h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.3px; }
 .tools { display: flex; align-items: center; gap: 10px; }
 .search { width: 220px; }
-.pick { width: 110px; }
-.bname { font-size: 12px; font-weight: 650; letter-spacing: .4px; color: var(--sf-muted); }
+.step { margin-bottom: 8px; }
+.step-label { display: block; font-size: 12px; font-weight: 650; letter-spacing: .3px; color: var(--sf-muted); margin-bottom: 8px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.tab { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 9px 14px; border: 1px solid var(--sf-line); border-radius: 10px; background: #fff; font: inherit; cursor: pointer; transition: .12s; }
+.tab b { font-size: 13px; letter-spacing: .3px; }
+.tab span { font-size: 11px; color: var(--sf-muted); }
+.tab:hover { border-color: #c3d2cb; }
+.tab.on { border-color: #0b6b4f; box-shadow: 0 0 0 2px rgba(11,107,79,.12); }
+.tab.on b { color: #0b6b4f; }
 .floor { margin-bottom: 24px; }
 .floor-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
 .lvl { font-weight: 650; font-size: 13px; letter-spacing: .4px; }
