@@ -77,14 +77,15 @@ to see a flip.
   which is what students see next.
 - **Role separation is enforced by the API**, not by hiding buttons in the front end.
 
-## What is deliberately not here yet
+## Planned next
 
-- No floor plans, no photos on reports, no notifications, no offline mode.
-- No campus-wide data. The rooms and sockets are hand-typed sample data for one floor.
-- No email verification, no self-registration. Accounts are seeded.
-- No mobile app. The web app is the product.
+- A floor plan per level, so a room is a drawing instead of a list.
+- Photos on reports, a notification when a socket you use changes state, and an offline view for the basement.
+- Room and socket data for the whole campus, imported one building at a time.
+- Email verification and self-registration for students.
+- A phone build, once the web app is used enough to justify it.
 
-Those belong to later iterations, whose scope is set at the review after each one.
+The scope of each step is set at the review after the previous iteration.
 
 ## Known prototype limits
 
