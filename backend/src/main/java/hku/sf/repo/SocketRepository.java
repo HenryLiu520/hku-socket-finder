@@ -4,6 +4,7 @@ import hku.sf.domain.SocketPoint;
 import hku.sf.domain.SocketState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SocketRepository extends JpaRepository<SocketPoint, Long> {
@@ -18,8 +19,8 @@ public interface SocketRepository extends JpaRepository<SocketPoint, Long> {
            join fetch st.room r
            join fetch r.floor f
            join fetch f.building b
-           where s.state = :state
+           where s.state in :states
            order by s.lastCheckedAt asc nulls last
            """)
-    List<SocketPoint> queueByState(SocketState state);
+    List<SocketPoint> queueByStates(@Param("states") List<SocketState> states);
 }

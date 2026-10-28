@@ -147,7 +147,7 @@ sequenceDiagram
 | GET | `/api/buildings` | 所有人 | 樓與樓層 |
 | GET | `/api/floors/{id}/rooms` | 所有人 | 房間與插座數量 |
 | GET | `/api/rooms/{id}` | 所有人 | 座位與插座 |
-| POST | `/api/sockets/{id}/report` | 學生 | 請求體 `{"state":"BROKEN"}` |
+| POST | `/api/sockets/{id}/report` | 學生 | 請求體 `{"state":"LOOSE"}`（`WORKING`、`LOOSE`、`NO_POWER`） |
 | POST | `/api/sockets/{id}/repair` | 維護人員 | 請求體 `{"note":"..."}` |
 | GET | `/api/maintenance/queue` | 維護人員 | 壞掉的插座，最久的排前 |
 
@@ -157,7 +157,9 @@ sequenceDiagram
 |---|---|---|
 | `UNKNOWN` | 種子資料 | 還沒人查過 |
 | `WORKING` | 兩條上報 | 兩個學生確認能充電 |
-| `BROKEN` | 兩條上報 | 兩個學生確認不能用 |
+| `LOOSE` | 兩條上報 | 兩個學生說插頭是鬆的 |
+| `NO_POWER` | 兩條上報 | 兩個學生說完全沒電 |
+| `BROKEN` | 不再產生 | 舊說法，保留是為了舊記錄讀得通 |
 | `REPAIRED` | 維護人員 | 修好了，但還沒人確認 |
 
 ## 八、這一版的限制

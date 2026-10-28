@@ -108,7 +108,7 @@ to see a flip.
 | GET | `/api/buildings` | anyone | buildings with their floors |
 | GET | `/api/floors/{id}/rooms` | anyone | rooms on a floor with socket counts |
 | GET | `/api/rooms/{id}` | anyone | seats and sockets in a room |
-| POST | `/api/sockets/{id}/report` | student | report `WORKING` or `BROKEN` |
+| POST | `/api/sockets/{id}/report` | student | report `WORKING`, `LOOSE` or `NO_POWER` |
 | POST | `/api/sockets/{id}/repair` | maintenance | mark repaired, with an optional note |
 | GET | `/api/maintenance/queue` | maintenance | sockets reported broken, oldest first |
 

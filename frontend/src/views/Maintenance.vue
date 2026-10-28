@@ -15,6 +15,13 @@
       <el-table-column prop="code" label="Socket" width="170">
         <template #default="{ row }"><code>{{ row.code }}</code></template>
       </el-table-column>
+      <el-table-column label="Fault" width="110">
+        <template #default="{ row }">
+          <el-tag :type="row.state === 'NO_POWER' ? 'danger' : 'warning'" effect="plain" size="small">
+            {{ row.state === 'NO_POWER' ? 'No power' : 'Loose' }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="Broken for" width="130">
         <template #default="{ row }">
           <b :class="{ old: row.daysBroken >= 7 }">{{ row.daysBroken }} day{{ row.daysBroken === 1 ? '' : 's' }}</b>

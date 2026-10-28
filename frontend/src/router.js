@@ -3,11 +3,13 @@ import Login from './views/Login.vue'
 import Rooms from './views/Rooms.vue'
 import RoomView from './views/RoomView.vue'
 import Maintenance from './views/Maintenance.vue'
+import Report from './views/Report.vue'
 
 const routes = [
   { path: '/login', component: Login, meta: { public: true } },
   { path: '/', component: Rooms },
   { path: '/rooms/:id', component: RoomView },
+  { path: '/report', component: Report },
   { path: '/maintenance', component: Maintenance, meta: { maintenance: true } },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]

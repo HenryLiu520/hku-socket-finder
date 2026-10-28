@@ -12,6 +12,7 @@
 
         <nav v-if="auth.signedIn" class="nav">
           <router-link to="/" class="navlink">Find a socket</router-link>
+          <router-link to="/report" class="navlink">Report a fault</router-link>
           <router-link v-if="auth.isMaintenance" to="/maintenance" class="navlink">Repair queue</router-link>
         </nav>
 

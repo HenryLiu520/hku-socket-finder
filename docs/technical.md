@@ -150,7 +150,7 @@ sequenceDiagram
 | GET | `/api/buildings` | any | buildings with floors |
 | GET | `/api/floors/{id}/rooms` | any | rooms with socket counts |
 | GET | `/api/rooms/{id}` | any | seats and sockets |
-| POST | `/api/sockets/{id}/report` | student | body `{"state":"BROKEN"}` |
+| POST | `/api/sockets/{id}/report` | student | body `{"state":"LOOSE"}` (`WORKING`, `LOOSE`, `NO_POWER`) |
 | POST | `/api/sockets/{id}/repair` | maintenance | body `{"note":"..."}` |
 | GET | `/api/maintenance/queue` | maintenance | broken sockets, oldest first |
 
@@ -160,7 +160,9 @@ sequenceDiagram
 |---|---|---|
 | `UNKNOWN` | seed data | nobody has checked this socket |
 | `WORKING` | two reports | two students confirm it charges |
-| `BROKEN` | two reports | two students confirm it does not |
+| `LOOSE` | two reports | two students say the plug wobbles |
+| `NO_POWER` | two reports | two students say nothing comes out |
+| `BROKEN` | none any more | the older word, kept so old rows still read correctly |
 | `REPAIRED` | maintenance | staff fixed it, nobody has confirmed yet |
 
 ## 8. Limits of this build

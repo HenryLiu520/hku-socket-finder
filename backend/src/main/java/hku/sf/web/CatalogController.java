@@ -24,6 +24,11 @@ public class CatalogController {
         return catalog.tree();
     }
 
+    @GetMapping("/buildings/{buildingId}/rooms")
+    public List<Dtos.RoomOption> buildingRooms(@PathVariable Long buildingId) {
+        return catalog.roomsOfBuilding(buildingId);
+    }
+
     @GetMapping("/floors/{floorId}/rooms")
     public List<Dtos.RoomSummaryDto> rooms(@PathVariable Long floorId) {
         return catalog.rooms(floorId);

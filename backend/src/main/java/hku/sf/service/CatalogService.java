@@ -44,6 +44,18 @@ public class CatalogService {
                 .toList();
     }
 
+    /** Every room in a building, in floor then room order, for the room picker. */
+    @Transactional(readOnly = true)
+    public List<Dtos.RoomOption> roomsOfBuilding(Long buildingId) {
+        List<Dtos.RoomOption> out = new ArrayList<>();
+        for (Floor f : floors.findByBuildingIdOrderByLevel(buildingId)) {
+            for (Room r : rooms.findByFloorIdOrderByCode(f.id)) {
+                out.add(new Dtos.RoomOption(r.id, r.code, r.name, f.level));
+            }
+        }
+        return out;
+    }
+
     @Transactional(readOnly = true)
     public List<Dtos.RoomSummaryDto> rooms(Long floorId) {
         List<Room> list = rooms.findByFloorIdOrderByCode(floorId);

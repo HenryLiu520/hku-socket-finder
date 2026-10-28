@@ -46,7 +46,8 @@
         </p>
         <div v-if="canReport" class="actions">
           <el-button type="success" plain @click="report('WORKING')">It works</el-button>
-          <el-button type="danger" plain @click="report('BROKEN')">It's broken</el-button>
+          <el-button type="warning" plain @click="report('LOOSE')">Loose</el-button>
+          <el-button type="danger" plain @click="report('NO_POWER')">No power</el-button>
         </div>
         <p v-else class="sf-muted">You already reported this socket today. Thanks.</p>
         <el-alert v-if="msg" :title="msg" :type="msgType" :closable="false" show-icon class="alert" />
@@ -86,12 +87,21 @@ const rows = computed(() => {
 
 const canReport = computed(() => current.socket && current.socket.myReportsToday === 0)
 
+const WORDS = {
+  WORKING: 'works',
+  LOOSE: 'loose',
+  NO_POWER: 'no power',
+  BROKEN: 'broken',
+  REPAIRED: 'repaired',
+  UNKNOWN: 'not checked'
+}
+
 function pretty(state) {
-  return state === 'UNKNOWN' ? 'not checked' : state.toLowerCase()
+  return WORDS[state] || state.toLowerCase()
 }
 
 function tagType(state) {
-  return { WORKING: 'success', BROKEN: 'danger', REPAIRED: 'info', UNKNOWN: 'info' }[state] || 'info'
+  return { WORKING: 'success', LOOSE: 'warning', NO_POWER: 'danger', BROKEN: 'danger', REPAIRED: 'info', UNKNOWN: 'info' }[state] || 'info'
 }
 
 function age(s) {
@@ -150,6 +160,8 @@ h2 { margin: 6px 0 4px; font-size: 20px; letter-spacing: -.3px; }
 .txt { font-size: 13px; font-weight: 600; }
 .age { font-size: 11.5px; color: var(--sf-muted); }
 .st-working { border-left: 3px solid #12b76a; }
+.st-loose { border-left: 3px solid #f79009; }
+.st-no_power { border-left: 3px solid #f04438; }
 .st-broken { border-left: 3px solid #f04438; }
 .st-repaired { border-left: 3px solid #444ce7; }
 .st-unknown { border-left: 3px solid #98a2b3; }

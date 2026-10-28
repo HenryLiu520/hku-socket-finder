@@ -105,7 +105,7 @@ open http://localhost:5175
 | GET | `/api/buildings` | 所有人 | 樓宇與樓層 |
 | GET | `/api/floors/{id}/rooms` | 所有人 | 某層的房間與插座數量 |
 | GET | `/api/rooms/{id}` | 所有人 | 房間裡的座位和插座 |
-| POST | `/api/sockets/{id}/report` | 學生 | 上報 `WORKING` 或 `BROKEN` |
+| POST | `/api/sockets/{id}/report` | 學生 | 上報 `WORKING`、`LOOSE` 或 `NO_POWER` |
 | POST | `/api/sockets/{id}/repair` | 維護人員 | 標記已修，可寫備註 |
 | GET | `/api/maintenance/queue` | 維護人員 | 報壞的插座，壞得最久的排前 |
 

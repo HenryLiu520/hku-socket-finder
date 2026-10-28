@@ -49,8 +49,8 @@ public class SocketService {
         } catch (IllegalArgumentException e) {
             throw new ApiException("BAD_STATE", "Report working or broken", 400);
         }
-        if (state != SocketState.WORKING && state != SocketState.BROKEN) {
-            throw new ApiException("BAD_STATE", "Report working or broken", 400);
+        if (state != SocketState.WORKING && state != SocketState.LOOSE && state != SocketState.NO_POWER) {
+            throw new ApiException("BAD_STATE", "Report working, loose or no power", 400);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -106,7 +106,7 @@ public class SocketService {
 
     public List<Dtos.QueueRow> queue() {
         LocalDateTime now = LocalDateTime.now();
-        return sockets.queueByState(SocketState.BROKEN).stream()
+        return sockets.queueByStates(java.util.List.of(SocketState.LOOSE, SocketState.NO_POWER, SocketState.BROKEN)).stream()
                 .map(s -> new Dtos.QueueRow(
                         s.id,
                         s.code,

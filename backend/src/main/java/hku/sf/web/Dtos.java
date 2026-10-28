@@ -14,6 +14,8 @@ public final class Dtos {
 
     public record BuildingDto(Long id, String code, String name, List<FloorDto> floors) { }
     public record FloorDto(Long id, String level) { }
+    /** One entry in the room picker: enough to pick a room and nothing else. */
+    public record RoomOption(Long id, String code, String name, String level) { }
     public record RoomSummaryDto(Long id, String code, String name, int seats, int sockets, int working, int broken, int repaired) { }
 
     public record SocketDto(Long id, String code, String kind, String state, LocalDateTime lastCheckedAt,
