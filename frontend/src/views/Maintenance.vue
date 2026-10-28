@@ -11,7 +11,10 @@
     <el-table :data="rows" v-loading="loading" class="sf-card" empty-text="Nothing reported broken right now">
       <el-table-column prop="building" label="Building" width="110" />
       <el-table-column prop="roomCode" label="Room" width="130" />
-      <el-table-column prop="seat" label="Seat" width="90" />
+      <el-table-column prop="seat" label="Seat" width="80" />
+      <el-table-column prop="code" label="Socket" width="170">
+        <template #default="{ row }"><code>{{ row.code }}</code></template>
+      </el-table-column>
       <el-table-column label="Broken for" width="130">
         <template #default="{ row }">
           <b :class="{ old: row.daysBroken >= 7 }">{{ row.daysBroken }} day{{ row.daysBroken === 1 ? '' : 's' }}</b>

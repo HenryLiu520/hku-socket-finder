@@ -14,6 +14,19 @@ Open a room, open a socket, report it broken, watch the state flip.
 The unit of the design is the socket, not the room. Booking systems count rooms and desks, repair systems
 count faults, and neither of them knows whether you can actually charge your laptop there.
 
+### The socket number
+
+Every socket carries a number, and the number is the unit the whole product turns on: a student reads it off the desk, staff read the same string in the repair queue, and the database refuses two sockets with the same one.
+
+```
+CW-L1-A-S2-B
+building + floor + room   seat   socket
+```
+
+- The first three parts are the room code, which already contains the building and the floor. Repeating them is on purpose: a sticker is read on its own, with no list beside it, so the number has to be enough to walk to the room.
+- The seat part is the seat's physical label, and the last letter is the socket on that seat, left to right as you sit down.
+- A number is assigned once. Renaming a room changes the name, not the number. Adding a seat takes the next number and never renumbers the sockets that already exist.
+
 ## How the loop keeps itself alive
 
 There are no sensors here and no one maintaining a database by hand. Everything the app knows comes from one loop, and the loop only turns because every step gives the next person a reason to take it.

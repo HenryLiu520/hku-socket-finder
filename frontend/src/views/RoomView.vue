@@ -21,7 +21,7 @@
               :class="'st-' + s.state.toLowerCase()"
               @click="open(s, seat)"
             >
-              <span class="ico">⏻</span>
+              <span class="ico">⏻{{ shortCode(s.code) }}</span>
               <span class="txt">{{ pretty(s.state) }}</span>
               <span class="age">{{ age(s) }}</span>
             </button>
@@ -32,6 +32,7 @@
 
     <el-dialog v-model="dialog" width="420px" :title="'Seat ' + (current.seat ? current.seat.label : '')">
       <div v-if="current.socket" class="dlg">
+        <p class="sf-muted code-line">Socket {{ current.socket.code }}</p>
         <div class="state-line">
           <el-tag :type="tagType(current.socket.state)" effect="light">{{ pretty(current.socket.state) }}</el-tag>
           <span class="sf-muted">{{ age(current.socket) }}</span>
@@ -68,6 +69,8 @@ const dialog = ref(false)
 const msg = ref('')
 const msgType = ref('success')
 const current = reactive({ socket: null, seat: null })
+
+const shortCode = (code) => (code ? code.split('-').pop() : '')
 
 const rows = computed(() => {
   const byY = {}

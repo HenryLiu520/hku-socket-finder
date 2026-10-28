@@ -16,7 +16,7 @@ public final class Dtos {
     public record FloorDto(Long id, String level) { }
     public record RoomSummaryDto(Long id, String code, String name, int seats, int sockets, int working, int broken, int repaired) { }
 
-    public record SocketDto(Long id, String kind, String state, LocalDateTime lastCheckedAt,
+    public record SocketDto(Long id, String code, String kind, String state, LocalDateTime lastCheckedAt,
                             Long daysSinceCheck, boolean stale, long myReportsToday, int reportsStillNeeded) { }
     public record SeatDto(Long id, String label, int x, int y, List<SocketDto> sockets) { }
     public record RoomDto(Long id, String code, String name, String level, String buildingCode,
@@ -25,7 +25,7 @@ public final class Dtos {
     public record ReportRequest(String state) { }
     public record ReportResult(SocketDto socket, boolean flipped, String message) { }
 
-    public record QueueRow(Long socketId, String building, String roomCode, String roomName,
+    public record QueueRow(Long socketId, String code, String building, String roomCode, String roomName,
                            String seat, Long daysBroken, LocalDateTime lastCheckedAt, String state,
                            long reporters) { }
 

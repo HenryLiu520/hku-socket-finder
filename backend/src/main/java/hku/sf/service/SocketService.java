@@ -32,7 +32,7 @@ public class SocketService {
 
     public Dtos.SocketDto toDto(SocketPoint s, LocalDateTime now, long reportsToday) {
         Long days = Rules.daysSince(s.lastCheckedAt, now);
-        return new Dtos.SocketDto(s.id, s.kind, s.state.name(), s.lastCheckedAt, days,
+        return new Dtos.SocketDto(s.id, s.code, s.kind, s.state.name(), s.lastCheckedAt, days,
                 Rules.isStale(s.lastCheckedAt, now, staleDays), reportsToday,
                 Rules.reportsStillNeeded((int) reportsToday, reportsNeeded));
     }
@@ -103,6 +103,7 @@ public class SocketService {
         return sockets.queueByState(SocketState.BROKEN).stream()
                 .map(s -> new Dtos.QueueRow(
                         s.id,
+                        s.code,
                         s.seat.room.floor.building.code,
                         s.seat.room.code,
                         s.seat.room.name,
