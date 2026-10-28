@@ -22,7 +22,7 @@
 
 ## 技术栈
 
-组里已经熟悉的栈，不用重新学：
+技术栈：
 
 - **后端**：Spring Boot 4.1、Java 21、Spring Data JPA、Flyway、PostgreSQL 17
 - **前端**：Vue 3 + Vite + Element Plus，一个应用服务两个角色

@@ -22,7 +22,7 @@
 
 ## 技術棧
 
-組裡已經熟悉的技術棧，不用重新學：
+技術棧：
 
 - **後端**：Spring Boot 4.1、Java 21、Spring Data JPA、Flyway、PostgreSQL 17
 - **前端**：Vue 3 + Vite + Element Plus，一個應用服務兩個角色
