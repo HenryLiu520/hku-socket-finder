@@ -48,7 +48,18 @@
 
 ## 怎麼跑
 
-需要：Java 21、Maven、Node 18+，以及 Docker 或本機 PostgreSQL 17。
+### Docker：一條命令起全套
+
+```bash
+docker compose up --build
+open http://localhost:8080
+```
+
+資料庫、介面、網頁一起起來。資料放在命名卷裡，想要乾淨的庫就 `docker compose down -v`；只想起資料庫用 `docker compose up -d db`。
+
+### 不用 Docker
+
+有 Java 21、Maven、Node 18+、PostgreSQL 17 就夠：
 
 ```bash
 ./scripts/start-all.sh      # 先準備資料庫，再起後端 8081 和前端 5175
@@ -57,7 +68,7 @@ open http://localhost:5175
 
 `scripts/setup-db.sh` 自己決定資料庫放哪：你設了 `SF_DB_URL` 就用現成的服務；有 Docker 就用 Docker；都沒有的話在 `db/pgdata` 裡建一個本專案專屬的叢集，埠號從第一個空閒的開始找。重複執行沒有副作用。
 
-埠號和帳號都是環境變數，有可用的預設值：`SF_DB_URL`、`SF_DB_USER`、`SF_DB_PASSWORD`、`SF_PORT`、`SF_WEB_PORT`。
+埠號和帳號都是環境變數，有可用的預設值：`SF_DB_URL`、`SF_DB_USER`、`SF_DB_PASSWORD`、`SF_BIND`、`SF_PORT`、`SF_WEB_PORT`。
 
 停止用 `./scripts/stop-all.sh`。
 ## 示範帳號（密碼都是 `demo1234`）

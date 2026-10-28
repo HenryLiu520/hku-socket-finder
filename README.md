@@ -48,7 +48,18 @@ Built with:
 
 ## Run it
 
-Requirements: Java 21, Maven, Node 18+, and either Docker or PostgreSQL 17.
+### Docker, everything in one command
+
+```bash
+docker compose up --build
+open http://localhost:8080
+```
+
+Postgres, the API and the web app come up together. The database lives in a named volume, so `docker compose down -v` is what gets you a clean one; `docker compose up -d db` starts only the database.
+
+### Without Docker
+
+Java 21, Maven, Node 18+ and PostgreSQL 17 are enough:
 
 ```bash
 ./scripts/start-all.sh      # database first, then backend :8081 and frontend :5175
@@ -57,7 +68,7 @@ open http://localhost:5175
 
 `scripts/setup-db.sh` decides where the database lives: an existing server if you set `SF_DB_URL`, Docker if it is available, otherwise its own cluster inside `db/pgdata` on the first free port. Running it twice is harmless.
 
-Ports and credentials are environment variables with working defaults: `SF_DB_URL`, `SF_DB_USER`, `SF_DB_PASSWORD`, `SF_PORT`, `SF_WEB_PORT`.
+Ports and credentials are environment variables with working defaults: `SF_DB_URL`, `SF_DB_USER`, `SF_DB_PASSWORD`, `SF_BIND`, `SF_PORT`, `SF_WEB_PORT`.
 
 Stop everything with `./scripts/stop-all.sh`.
 ## Demo accounts (password `demo1234`)

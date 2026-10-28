@@ -1,4 +1,5 @@
-# 只需要数据库的话：docker compose up -d db
+# 一条命令起全套：docker compose up --build
+# 只想要数据库：docker compose up -d db
 services:
   db:
     image: postgres:17-alpine
@@ -7,8 +8,6 @@ services:
       POSTGRES_DB: socketfinder
       POSTGRES_USER: socketfinder
       POSTGRES_PASSWORD: socketfinder
-    ports:
-      - "5433:5432"
     volumes:
       - socketfinder-data:/var/lib/postgresql/data
     healthcheck:
@@ -16,6 +15,30 @@ services:
       interval: 3s
       timeout: 3s
       retries: 20
+
+  backend:
+    build: ./backend
+    container_name: socketfinder-api
+    environment:
+      SF_DB_URL: jdbc:postgresql://db:5432/socketfinder
+      SF_DB_USER: socketfinder
+      SF_DB_PASSWORD: socketfinder
+      SF_BIND: 0.0.0.0
+      SF_PORT: 8081
+      SF_CORS_ORIGIN: http://localhost:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+
+  frontend:
+    build: ./frontend
+    container_name: socketfinder-web
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
 
 volumes:
   socketfinder-data:
