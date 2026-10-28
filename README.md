@@ -22,7 +22,7 @@ count faults, and neither of them knows whether you can actually charge your lap
 
 ## Stack
 
-Same stack as our COMP1110 project, so nobody had to learn anything new:
+The stack, chosen because the group already knows it:
 
 - **Backend**: Spring Boot 4.1, Java 21, Spring Data JPA, Flyway, PostgreSQL 17
 - **Frontend**: Vue 3 + Vite + Element Plus, one application for both roles
