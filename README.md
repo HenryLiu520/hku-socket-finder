@@ -14,6 +14,20 @@ Open a room, open a socket, report it broken, watch the state flip.
 The unit of the design is the socket, not the room. Booking systems count rooms and desks, repair systems
 count faults, and neither of them knows whether you can actually charge your laptop there.
 
+## How the loop keeps itself alive
+
+There are no sensors here and no one maintaining a database by hand. Everything the app knows comes from one loop, and the loop only turns because every step gives the next person a reason to take it.
+
+1. A student opens a room and sees each socket with the date it was last checked.
+2. If it is dead, they report it in one tap. Nothing else is asked of them.
+3. A second student reports the same thing within 24 hours, and the state changes. One voice is not enough, so nobody can mark a floor alone.
+4. The queue is sorted by how long a socket has been dead, so staff repair the worst ones first and then mark them done.
+5. The next student sees "repaired" with the date, and either trusts it or checks again. That check is the next report, and the loop starts over.
+
+![The loop](docs/diagrams/loop.png)
+
+Two details keep it turning. Every entry carries a date, so an old check looks old and a stale socket is never sold as a working one. And the 30 day mark turns "I am not sure about this one" into an action, which costs one tap.
+
 ## Screens
 
 | Room page | Repair queue |
