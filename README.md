@@ -24,7 +24,7 @@ There are no sensors here and no one maintaining a database by hand. Everything 
 4. The queue is sorted by how long a socket has been dead, so staff repair the worst ones first and then mark them done.
 5. The next student sees "repaired" with the date, and either trusts it or checks again. That check is the next report, and the loop starts over.
 
-![The loop](docs/diagrams/loop.png)
+![The loop](docs/diagrams/loop-en.png)
 
 Two details keep it turning. Every entry carries a date, so an old check looks old and a stale socket is never sold as a working one. And the 30 day mark turns "I am not sure about this one" into an action, which costs one tap.
 
