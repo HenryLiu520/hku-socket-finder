@@ -77,16 +77,6 @@ to see a flip.
   which is what students see next.
 - **Role separation is enforced by the API**, not by hiding buttons in the front end.
 
-## Tests
-
-```bash
-./scripts/test.sh     # 4 unit tests on the rules, then the end-to-end script
-```
-
-The end-to-end script (`scripts/e2e.py`) walks the whole loop over real HTTP: log in as two students,
-report, hit the rate limit, flip the state, see it in the maintenance queue, repair it, and confirm the
-student view.
-
 ## What is deliberately not here yet
 
 - No floor plans, no photos on reports, no notifications, no offline mode.
