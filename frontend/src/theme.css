@@ -1,0 +1,16 @@
+:root {
+  --sf-ink: #1f2328;
+  --sf-muted: #6b7280;
+  --sf-line: #e5e7eb;
+  --sf-green: #0b6b4f;
+  --sf-paper: #f7f7f5;
+}
+html, body, #app { height: 100%; margin: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--sf-ink);
+  background: var(--sf-paper);
+}
+.sf-wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+.sf-card { background: #fff; border: 1px solid var(--sf-line); border-radius: 10px; }
+.sf-muted { color: var(--sf-muted); font-size: 13px; }

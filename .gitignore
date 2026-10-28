@@ -1,0 +1,15 @@
+# build output
+backend/target/
+frontend/dist/
+frontend/node_modules/
+
+# local run artefacts
+logs/
+*.pid
+uploads/
+*.log
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/
