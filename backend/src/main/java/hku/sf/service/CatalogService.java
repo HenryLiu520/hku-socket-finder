@@ -71,17 +71,24 @@ public class CatalogService {
         List<Dtos.RoomSummaryDto> out = new ArrayList<>();
         for (Room r : list) {
             List<Seat> rs = byRoom.getOrDefault(r.id, List.of());
-            int sockets_ = 0, working = 0, broken = 0, repaired = 0;
+            int sockets_ = 0, working = 0, broken = 0, repaired = 0, loose = 0, noPower = 0, unknown = 0;
+            LocalDateTime lastCheck = null;
             for (Seat s : rs) {
                 for (SocketPoint sp : bySeat.getOrDefault(s.id, List.of())) {
                     sockets_++;
                     if (sp.state == SocketState.WORKING) working++;
-                    if (sp.state == SocketState.BROKEN || sp.state == SocketState.LOOSE
-                            || sp.state == SocketState.NO_POWER) broken++;
+                    if (sp.state == SocketState.LOOSE) loose++;
+                    if (sp.state == SocketState.NO_POWER) noPower++;
+                    if (sp.state == SocketState.BROKEN) broken++;
                     if (sp.state == SocketState.REPAIRED) repaired++;
+                    if (sp.state == SocketState.UNKNOWN) unknown++;
+                    if (sp.lastCheckedAt != null && (lastCheck == null || sp.lastCheckedAt.isAfter(lastCheck))) {
+                        lastCheck = sp.lastCheckedAt;
+                    }
                 }
             }
-            out.add(new Dtos.RoomSummaryDto(r.id, r.code, r.name, rs.size(), sockets_, working, broken, repaired));
+            out.add(new Dtos.RoomSummaryDto(r.id, r.code, r.name, rs.size(), sockets_, working, broken, repaired,
+                    loose, noPower, unknown, lastCheck));
         }
         return out;
     }

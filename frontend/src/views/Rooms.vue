@@ -3,16 +3,15 @@
     <div class="head">
       <div>
         <h2>Find a socket</h2>
-        <p class="sf-muted">Pick a building, then a room. The room opens as a list of every socket in it.</p>
+        <p class="sf-muted">Rooms are sorted by how much is wrong with them. Faulty sockets first.</p>
       </div>
-      <el-select v-model="buildingId" class="pick" @change="loadBuilding">
-        <el-option
-          v-for="b in buildings"
-          :key="b.id"
-          :label="b.code + ' · ' + b.name"
-          :value="b.id"
-        />
-      </el-select>
+      <div class="tools">
+        <el-input v-model="q" placeholder="Search a room, e.g. L1-B" clearable class="search" />
+        <el-select v-if="buildings.length > 1" v-model="buildingId" class="pick" @change="loadBuilding">
+          <el-option v-for="b in buildings" :key="b.id" :label="b.code" :value="b.id" />
+        </el-select>
+        <span v-else class="bname">{{ currentBuilding ? currentBuilding.code : '' }}</span>
+      </div>
     </div>
 
     <div v-loading="loading">
@@ -22,54 +21,88 @@
           <span class="sf-muted">{{ f.rooms.length }} rooms</span>
         </div>
 
-        <el-row :gutter="16">
-          <el-col v-for="r in f.rooms" :key="r.id" :xs="24" :sm="12" :md="8">
-            <div class="room sf-card" @click="$router.push('/rooms/' + r.id)">
-              <div class="code">{{ r.code }}</div>
-              <div class="nm">{{ r.name }}</div>
-              <div class="stat">
-                <span><b>{{ r.sockets }}</b> sockets</span>
-                <span class="ok">{{ r.working }} working</span>
-                <span class="bad">{{ r.broken }} faulty</span>
-                <span v-if="r.repaired" class="rep">{{ r.repaired }} repaired</span>
-              </div>
-              <div class="hint">Open room →</div>
+        <div class="grid">
+          <div v-for="r in f.rooms" :key="r.id" class="room sf-card" @click="$router.push('/rooms/' + r.id)">
+            <div class="row1">
+              <span class="code">{{ r.code }}</span>
+              <span class="ago" :class="{ never: !r.lastCheckedAt }">{{ ago(r.lastCheckedAt) }}</span>
             </div>
-          </el-col>
-        </el-row>
+            <div class="nm">{{ r.name }}</div>
 
-        <p v-if="!f.rooms.length" class="sf-muted">No rooms on this floor yet.</p>
+            <div class="chips">
+              <span v-if="r.noPower" class="chip c-red">{{ r.noPower }} no power</span>
+              <span v-if="r.loose" class="chip c-amber">{{ r.loose }} loose</span>
+              <span v-if="r.broken" class="chip c-red">{{ r.broken }} broken</span>
+              <span v-if="r.working" class="chip c-green">{{ r.working }} working</span>
+              <span v-if="r.repaired" class="chip c-blue">{{ r.repaired }} repaired</span>
+              <span v-if="r.unknown" class="chip c-grey">{{ r.unknown }} not checked</span>
+            </div>
+
+            <div class="foot">
+              <span>{{ r.sockets }} sockets</span>
+              <span class="open">Open →</span>
+            </div>
+          </div>
+        </div>
+
+        <p v-if="!f.rooms.length" class="sf-muted empty">No rooms on this floor yet.</p>
       </section>
 
-      <p v-if="!loading && !floors.length" class="sf-muted">No rooms seeded yet.</p>
+      <p v-if="!loading && !floors.length" class="sf-muted empty">No rooms match “{{ q }}”.</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import api from '../api'
 
 const buildings = ref([])
 const buildingId = ref(null)
 const loading = ref(true)
 const floors = ref([])
+const q = ref('')
+
+const currentBuilding = computed(() => buildings.value.find((b) => b.id === buildingId.value) || null)
+
+function ago(t) {
+  if (!t) return 'never checked'
+  const mins = Math.round((Date.now() - new Date(t).getTime()) / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return mins + ' min ago'
+  const hours = Math.round(mins / 60)
+  if (hours < 24) return hours + ' h ago'
+  const days = Math.round(hours / 24)
+  return days === 1 ? 'yesterday' : days + ' days ago'
+}
+
+const score = (r) => r.noPower * 3 + r.loose * 2 + r.broken * 3 - r.working
 
 async function loadBuilding() {
   loading.value = true
   try {
-    const b = buildings.value.find((x) => x.id === buildingId.value)
+    const b = currentBuilding.value
     if (!b) return
     const out = []
     for (const f of b.floors) {
       const { data } = await api.get('/floors/' + f.id + '/rooms')
-      out.push({ id: f.id, level: f.level, rooms: data })
+      const needle = q.value.trim().toLowerCase()
+      const rooms = data
+        .filter((r) => !needle || (r.code + ' ' + r.name).toLowerCase().includes(needle))
+        .sort((a, b2) => score(b2) - score(a) || a.code.localeCompare(b2.code))
+      out.push({ id: f.id, level: f.level, rooms })
     }
     floors.value = out
   } finally {
     loading.value = false
   }
 }
+
+let timer = null
+watch(q, () => {
+  clearTimeout(timer)
+  timer = setTimeout(loadBuilding, 180)
+})
 
 onMounted(async () => {
   try {
@@ -88,17 +121,29 @@ onMounted(async () => {
 <style scoped>
 .head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; gap: 16px; flex-wrap: wrap; }
 h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.3px; }
-.pick { width: 280px; }
-.floor { margin-bottom: 22px; }
+.tools { display: flex; align-items: center; gap: 10px; }
+.search { width: 220px; }
+.pick { width: 110px; }
+.bname { font-size: 12px; font-weight: 650; letter-spacing: .4px; color: var(--sf-muted); }
+.floor { margin-bottom: 24px; }
 .floor-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
-.lvl { font-weight: 650; font-size: 13px; letter-spacing: .4px; color: var(--sf-ink); }
-.room { padding: 16px; margin-bottom: 16px; cursor: pointer; transition: .15s; }
-.room:hover { border-color: #c3d2cb; box-shadow: 0 4px 14px rgba(20,40,30,.06); transform: translateY(-1px); }
-.code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--sf-muted); }
-.nm { font-weight: 600; margin: 4px 0 10px; }
-.stat { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--sf-muted); }
-.ok { color: #0b6b4f; }
-.bad { color: #c0392b; }
-.rep { color: #3538cd; }
-.hint { margin-top: 12px; font-size: 12px; color: var(--sf-muted); }
+.lvl { font-weight: 650; font-size: 13px; letter-spacing: .4px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.room { padding: 15px 16px; cursor: pointer; transition: .15s; display: flex; flex-direction: column; gap: 8px; }
+.room:hover { border-color: #c3d2cb; box-shadow: 0 6px 18px rgba(20,40,30,.07); transform: translateY(-1px); }
+.row1 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; font-weight: 600; }
+.ago { font-size: 11.5px; color: var(--sf-muted); }
+.ago.never { color: #b54708; }
+.nm { font-size: 13px; color: var(--sf-muted); margin-top: -4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 11px; padding: 2px 7px; border-radius: 6px; font-weight: 550; }
+.c-red { background: #fef3f2; color: #b42318; }
+.c-amber { background: #fffaeb; color: #b54708; }
+.c-green { background: #ecfdf3; color: #027a48; }
+.c-blue { background: #eef4ff; color: #3538cd; }
+.c-grey { background: #f2f4f7; color: #475467; }
+.foot { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--sf-muted); border-top: 1px solid var(--sf-line); padding-top: 8px; }
+.open { color: var(--sf-ink); }
+.empty { margin-top: 12px; }
 </style>
