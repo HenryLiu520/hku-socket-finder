@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# 推送前强制检查三份 README 是否同步
+exec "$(git rev-parse --show-toplevel)/scripts/check-readmes.sh"

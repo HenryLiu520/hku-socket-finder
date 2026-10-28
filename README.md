@@ -1,29 +1,46 @@
-# Socket Finder - CCST9003 Group R21
+# Socket Finder
 
-Iteration 1 of the group project: **one socket, end to end**.
-Open a room, open a socket, report it broken, watch the state flip. Two different students have to
-report the same thing before the state changes, and a check older than 30 days is shown as old.
+**Find a seat you can charge at.** A web app that tells a student, before they sit down, whether the power socket at that desk works.
 
-Stack: same as our COMP1110 project - Spring Boot + PostgreSQL + Vue 3 (one front end, two roles).
+English · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
 
-```
-backend/   Spring Boot 4, JPA, Flyway, PostgreSQL
-frontend/  Vue 3 + Vite + Element Plus, single application, role decides the views
-scripts/   start / stop / test / e2e
-docs/      screenshots
-```
+![Rooms](docs/screens/01-rooms.png)
+
+## What this is
+
+A HKU CCST9003 group project (Group R21). This repository is **iteration 1**: one socket, end to end.
+Open a room, open a socket, report it broken, watch the state flip.
+
+The unit of the design is the socket, not the room. Booking systems count rooms and desks, repair systems
+count faults, and neither of them knows whether you can actually charge your laptop there.
+
+## Screens
+
+| Room page | Repair queue |
+|---|---|
+| ![Room](docs/screens/02-room.png) | ![Queue](docs/screens/03-queue.png) |
+
+## Stack
+
+Same stack as our COMP1110 project, so nobody had to learn anything new:
+
+- **Backend**: Spring Boot 4.1, Java 21, Spring Data JPA, Flyway, PostgreSQL 17
+- **Frontend**: Vue 3 + Vite + Element Plus, one application for both roles
+- **Auth**: email + password (BCrypt), token in memory, role checked on every write
 
 ## Run it
 
+Requirements: Java 21, Maven, Node 18+, PostgreSQL running locally.
+
 ```bash
-# once: create the database (PostgreSQL 17 on port 5433)
+# once: create the database (this project assumes PostgreSQL on port 5433)
 createdb -p 5433 -h 127.0.0.1 socketfinder
 
-./scripts/start-all.sh          # backend :8081, frontend :5175
+./scripts/start-all.sh      # backend on :8081, frontend on :5175
 open http://localhost:5175
 ```
 
-Stop with `./scripts/stop-all.sh`.
+Stop everything with `./scripts/stop-all.sh`.
 
 ## Demo accounts (password `demo1234`)
 
@@ -33,24 +50,69 @@ Stop with `./scripts/stop-all.sh`.
 | student2@connect.hku.hk | student | second reporter, needed to flip a socket |
 | estates@hku.hk | maintenance | sees the repair queue |
 
-## What is implemented (iteration 1)
+Two different accounts have to report the same thing before a state changes, so you need both students
+to see a flip.
 
-- One floor, three rooms of hand-typed data (Chi Wah Learning Commons L1), 18 sockets.
-- Single front end, two roles. Students report, maintenance sees the queue and closes a repair.
-- Two independent reports within 24 hours flip the state. One report is stored and shown as unconfirmed.
-- One report per account per socket per day (HTTP 429 if you try again).
-- A check older than 30 days is flagged as old in the interface.
-- A repair resets the state to `REPAIRED` and stamps the time; students then see "repaired, checked today"
-  until someone reports it working again.
+## API
+
+| Method | Path | Who | What |
+|---|---|---|---|
+| POST | `/api/auth/login` | anyone | email + password, returns a token |
+| GET | `/api/auth/demo-accounts` | anyone | the three demo logins, for the sign-in page |
+| GET | `/api/buildings` | anyone | buildings with their floors |
+| GET | `/api/floors/{id}/rooms` | anyone | rooms on a floor with socket counts |
+| GET | `/api/rooms/{id}` | anyone | seats and sockets in a room |
+| POST | `/api/sockets/{id}/report` | student | report `WORKING` or `BROKEN` |
+| POST | `/api/sockets/{id}/repair` | maintenance | mark repaired, with an optional note |
+| GET | `/api/maintenance/queue` | maintenance | sockets reported broken, oldest first |
+
+## Rules this version implements
+
+- **Two reports flip a socket.** Two different accounts, same state, within 24 hours. One report on its
+  own is stored and shown as unconfirmed.
+- **One report per account per socket per day.** A second attempt returns HTTP 429.
+- **Old checks are labelled old.** Anything past 30 days is flagged in the interface instead of being
+  trusted as fresh.
+- **Only maintenance can close a repair.** A repair sets the state to `REPAIRED` and stamps the time,
+  which is what students see next.
+- **Role separation is enforced by the API**, not by hiding buttons in the front end.
+
+## Tests
+
+```bash
+./scripts/test.sh     # 4 unit tests on the rules, then the end-to-end script
+```
+
+The end-to-end script (`scripts/e2e.py`) walks the whole loop over real HTTP: log in as two students,
+report, hit the rate limit, flip the state, see it in the maintenance queue, repair it, and confirm the
+student view.
 
 ## What is deliberately not here yet
 
-No accounts by invitation (roles are seeded), no email verification, no photos, no notifications,
-no whole-campus data import, no floor plan drawing. Those are iterations 2 and 3, whose scope is set
-at the review after each iteration.
+- No floor plans, no photos on reports, no notifications, no offline mode.
+- No campus-wide data. The rooms and sockets are hand-typed sample data for one floor.
+- No email verification, no self-registration. Accounts are seeded.
+- No mobile app. The web app is the product.
+
+Those belong to later iterations, whose scope is set at the review after each one.
 
 ## Known prototype limits
 
-- Auth tokens live in memory, so restarting the backend signs everyone out. Fine for a demo, wrong for real use.
-- Passwords are BCrypt, but there is no rate limit on the login endpoint.
-- The socket data is hand-typed, so it is a sample, not the truth about a real floor.
+- Tokens live in memory, so restarting the backend signs everyone out.
+- Passwords are BCrypt, but the login endpoint has no rate limit.
+- The seed data is a sample, not a survey of a real floor.
+
+## Repository layout
+
+```
+backend/   Spring Boot API, Flyway migrations, seed data, unit tests
+frontend/  Vue 3 application (one build, two roles)
+scripts/   start / stop / test / end-to-end
+docs/      screenshots
+```
+
+---
+
+**Keeping the READMEs in sync.** This project has three READMEs: English, Simplified Chinese and
+Traditional Chinese. Any change to one must be made in all three in the same commit. `scripts/check-readmes.sh`
+verifies that the three still have the same structure, and it runs before every push.
