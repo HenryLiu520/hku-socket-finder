@@ -1,17 +1,19 @@
 # 一条命令起全套：docker compose up --build
 # 只想要数据库：docker compose up -d db
+# 端口、口令、对外域名全部走环境变量，服务器上只改 .env，不改这个文件。
 services:
   db:
     image: postgres:17-alpine
     container_name: socketfinder-db
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: socketfinder
-      POSTGRES_USER: socketfinder
-      POSTGRES_PASSWORD: socketfinder
+      POSTGRES_DB: ${SF_DB_NAME:-socketfinder}
+      POSTGRES_USER: ${SF_DB_USER:-socketfinder}
+      POSTGRES_PASSWORD: ${SF_DB_PASSWORD:-socketfinder}
     volumes:
       - socketfinder-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U socketfinder -d socketfinder"]
+      test: ["CMD-SHELL", "pg_isready -U ${SF_DB_USER:-socketfinder} -d ${SF_DB_NAME:-socketfinder}"]
       interval: 3s
       timeout: 3s
       retries: 20
@@ -19,26 +21,29 @@ services:
   backend:
     build: ./backend
     container_name: socketfinder-api
+    restart: unless-stopped
     environment:
-      SF_DB_URL: jdbc:postgresql://db:5432/socketfinder
-      SF_DB_USER: socketfinder
-      SF_DB_PASSWORD: socketfinder
+      SF_DB_URL: jdbc:postgresql://db:5432/${SF_DB_NAME:-socketfinder}
+      SF_DB_USER: ${SF_DB_USER:-socketfinder}
+      SF_DB_PASSWORD: ${SF_DB_PASSWORD:-socketfinder}
       SF_BIND: 0.0.0.0
       SF_PORT: 8081
-      SF_CORS_ORIGIN: http://localhost:8080
+      SF_CORS_ORIGIN: ${SF_PUBLIC_ORIGIN:-http://localhost:8080}
     depends_on:
       db:
         condition: service_healthy
+    # 只在调试时把 API 暴露到宿主机；正常走前端的 /api 反代，不需要这一条
     ports:
-      - "8081:8081"
+      - "${SF_API_PORT:-8081}:8081"
 
   frontend:
     build: ./frontend
     container_name: socketfinder-web
+    restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "8080:80"
+      - "${SF_WEB_PORT:-8080}:80"
 
 volumes:
   socketfinder-data:
