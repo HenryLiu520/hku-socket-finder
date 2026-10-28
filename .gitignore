@@ -9,6 +9,10 @@ logs/
 uploads/
 *.log
 
+# local database cluster and env (created by scripts/setup-db.sh)
+db/
+.env
+
 # editor / OS
 .DS_Store
 .idea/

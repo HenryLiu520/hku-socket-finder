@@ -1,0 +1,21 @@
+# 只需要数据库的话：docker compose up -d db
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: socketfinder-db
+    environment:
+      POSTGRES_DB: socketfinder
+      POSTGRES_USER: socketfinder
+      POSTGRES_PASSWORD: socketfinder
+    ports:
+      - "5433:5432"
+    volumes:
+      - socketfinder-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U socketfinder -d socketfinder"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  socketfinder-data:

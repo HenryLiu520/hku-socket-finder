@@ -1,14 +1,14 @@
 server:
-  port: 8081
+  port: ${SF_PORT:8081}
   address: 127.0.0.1
 
 spring:
   application:
     name: socket-finder
   datasource:
-    url: jdbc:postgresql://localhost:5433/socketfinder
-    username: ${USER:ran}
-    password: ""
+    url: ${SF_DB_URL:jdbc:postgresql://localhost:5433/socketfinder}
+    username: ${SF_DB_USER:ran}
+    password: ${SF_DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -24,7 +24,7 @@ spring:
     baseline-on-migrate: true
 
 app:
-  cors-allowed-origin: "http://localhost:5175"
+  cors-allowed-origin: ${SF_CORS_ORIGIN:http://localhost:5175}
   stale-days: 30
   reports-needed: 2
   report-window-hours: 24
