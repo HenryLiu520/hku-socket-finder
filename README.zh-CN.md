@@ -4,7 +4,7 @@
 
 [English](README.md) · 简体中文 · [繁體中文](README.zh-TW.md)
 
-![房间列表](docs/screens/01-rooms.png)
+![找插座](docs/screens/01-find.png)
 
 ## 这是什么
 
@@ -43,9 +43,9 @@ CPD-LG01-0001        MW-T1-5445
 
 ## 界面
 
-| 房间页 | 维修队列 |
-|---|---|
-| ![房间](docs/screens/02-room.png) | ![队列](docs/screens/03-queue.png) |
+| 房间：平面图 + 列表 | 故障上报 | 维修队列 |
+|---|---|---|
+| ![房间](docs/screens/02-room.png) | ![上报](docs/screens/03-report.png) | ![队列](docs/screens/04-queue.png) |
 
 ## 技术说明
 
@@ -103,6 +103,7 @@ open http://localhost:5175
 | POST | `/api/auth/login` | 所有人 | 邮箱 + 密码，返回 token |
 | GET | `/api/auth/demo-accounts` | 所有人 | 三个演示账号，登录页用 |
 | GET | `/api/buildings` | 所有人 | 楼宇与楼层 |
+| GET | `/api/buildings/{id}/rooms` | 所有人 | 某栋楼的全部房间，选房用 |
 | GET | `/api/floors/{id}/rooms` | 所有人 | 某层的房间与插座数量 |
 | GET | `/api/rooms/{id}` | 所有人 | 房间里的座位和插座 |
 | POST | `/api/sockets/{id}/report` | 学生 | 上报 `WORKING`、`LOOSE` 或 `NO_POWER` |
@@ -119,7 +120,7 @@ open http://localhost:5175
 
 ## 接下来打算做
 
-- 每层一张平面图，房间从列表变成一张图。
+- 把示意图换成真实平面图：房间轮廓用学校自己的图纸，座位按坐标摆放，而不是现在这种整齐网格。
 - 上报可以带照片；常用的插座状态变了能收到通知；地下室这种信号差的地方能离线查看。
 - 全校的房间与插座数据，按楼逐栋导入。
 - 学生邮箱验证与自助注册。

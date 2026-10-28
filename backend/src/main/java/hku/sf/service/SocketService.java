@@ -121,7 +121,7 @@ public class SocketService {
                         Rules.daysSince(s.lastCheckedAt, now),
                         s.lastCheckedAt,
                         s.state.name(),
-                        reports.countDistinctAccounts(s.id, SocketState.BROKEN, now.minusDays(7))))
+                        reports.countDistinctAccounts(s.id, s.state, now.minusDays(7))))
                 .toList();
     }
 }

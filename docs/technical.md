@@ -148,11 +148,16 @@ sequenceDiagram
 |---|---|---|---|
 | POST | `/api/auth/login` | any | returns a token, valid 8 hours |
 | GET | `/api/buildings` | any | buildings with floors |
+| GET | `/api/buildings/{id}/rooms` | any | every room in a building, for the room picker |
 | GET | `/api/floors/{id}/rooms` | any | rooms with socket counts |
 | GET | `/api/rooms/{id}` | any | seats and sockets |
 | POST | `/api/sockets/{id}/report` | student | body `{"state":"LOOSE"}` (`WORKING`, `LOOSE`, `NO_POWER`) |
 | POST | `/api/sockets/{id}/repair` | maintenance | body `{"note":"..."}` |
 | GET | `/api/maintenance/queue` | maintenance | broken sockets, oldest first |
+
+The floor plan is drawn in the browser from the room's seats: three desks a row, each socket a chip
+showing the last four digits of its `code`. The seats carry `x` and `y`, and a real drawing will use
+them; this build does not, because the seed coordinates are a single row per room.
 
 ## 7. States
 

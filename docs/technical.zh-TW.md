@@ -145,11 +145,15 @@ sequenceDiagram
 |---|---|---|---|
 | POST | `/api/auth/login` | 所有人 | 回傳 token，8 小時有效 |
 | GET | `/api/buildings` | 所有人 | 樓與樓層 |
+| GET | `/api/buildings/{id}/rooms` | 所有人 | 某棟樓的全部房間，選房用 |
 | GET | `/api/floors/{id}/rooms` | 所有人 | 房間與插座數量 |
 | GET | `/api/rooms/{id}` | 所有人 | 座位與插座 |
 | POST | `/api/sockets/{id}/report` | 學生 | 請求體 `{"state":"LOOSE"}`（`WORKING`、`LOOSE`、`NO_POWER`） |
 | POST | `/api/sockets/{id}/repair` | 維護人員 | 請求體 `{"note":"..."}` |
 | GET | `/api/maintenance/queue` | 維護人員 | 壞掉的插座，最久的排前 |
+
+平面圖是瀏覽器用房間的座位資料畫的：一行三張桌子，每支插座一個小塊，寫 `code` 的後四位。
+座位上有 `x`、`y`，真實圖紙會用它們；這一版沒有用，因為種子座標每間房只是一行。
 
 ## 七、狀態
 

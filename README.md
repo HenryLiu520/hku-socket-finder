@@ -4,7 +4,7 @@
 
 English · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
 
-![Rooms](docs/screens/01-rooms.png)
+![Find a socket](docs/screens/01-find.png)
 
 ## What this is
 
@@ -43,9 +43,9 @@ Two details keep it turning. Every entry carries a date, so an old check looks o
 
 ## Screens
 
-| Room page | Repair queue |
-|---|---|
-| ![Room](docs/screens/02-room.png) | ![Queue](docs/screens/03-queue.png) |
+| A room: the plan and the list | Report a fault | Repair queue |
+|---|---|---|
+| ![Room](docs/screens/02-room.png) | ![Report](docs/screens/03-report.png) | ![Queue](docs/screens/04-queue.png) |
 
 ## Technical notes
 
@@ -106,6 +106,7 @@ to see a flip.
 | POST | `/api/auth/login` | anyone | email + password, returns a token |
 | GET | `/api/auth/demo-accounts` | anyone | the three demo logins, for the sign-in page |
 | GET | `/api/buildings` | anyone | buildings with their floors |
+| GET | `/api/buildings/{id}/rooms` | anyone | every room in a building, for the room picker |
 | GET | `/api/floors/{id}/rooms` | anyone | rooms on a floor with socket counts |
 | GET | `/api/rooms/{id}` | anyone | seats and sockets in a room |
 | POST | `/api/sockets/{id}/report` | student | report `WORKING`, `LOOSE` or `NO_POWER` |
@@ -127,7 +128,7 @@ to see a flip.
 
 ## Planned next
 
-- A floor plan per level, so a room is a drawing instead of a list.
+- A real floor plan under the schematic: the room outline from the building's own drawing, and seats placed by their coordinates instead of the tidy grid used here.
 - Photos on reports, a notification when a socket you use changes state, and an offline view for the basement.
 - Room and socket data for the whole campus, imported one building at a time.
 - Email verification and self-registration for students.
