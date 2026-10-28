@@ -48,18 +48,18 @@
 
 ## 怎麼跑
 
-需要：Java 21、Maven、Node 18+、本機跑著的 PostgreSQL。
+需要：Java 21、Maven、Node 18+，以及 Docker 或本機 PostgreSQL 17。
 
 ```bash
-# 只做一次：建庫（本項目假定 PostgreSQL 在 5433 端口）
-createdb -p 5433 -h 127.0.0.1 socketfinder
-
-./scripts/start-all.sh      # 後端 8081，前端 5175
+./scripts/start-all.sh      # 先準備資料庫，再起後端 8081 和前端 5175
 open http://localhost:5175
 ```
 
-停止用 `./scripts/stop-all.sh`。
+`scripts/setup-db.sh` 自己決定資料庫放哪：你設了 `SF_DB_URL` 就用現成的服務；有 Docker 就用 Docker；都沒有的話在 `db/pgdata` 裡建一個本專案專屬的叢集，埠號從第一個空閒的開始找。重複執行沒有副作用。
 
+埠號和帳號都是環境變數，有可用的預設值：`SF_DB_URL`、`SF_DB_USER`、`SF_DB_PASSWORD`、`SF_PORT`、`SF_WEB_PORT`。
+
+停止用 `./scripts/stop-all.sh`。
 ## 示範帳號（密碼都是 `demo1234`）
 
 | 電郵 | 角色 | 用途 |

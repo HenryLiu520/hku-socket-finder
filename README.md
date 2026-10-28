@@ -48,18 +48,18 @@ Built with:
 
 ## Run it
 
-Requirements: Java 21, Maven, Node 18+, PostgreSQL running locally.
+Requirements: Java 21, Maven, Node 18+, and either Docker or PostgreSQL 17.
 
 ```bash
-# once: create the database (this project assumes PostgreSQL on port 5433)
-createdb -p 5433 -h 127.0.0.1 socketfinder
-
-./scripts/start-all.sh      # backend on :8081, frontend on :5175
+./scripts/start-all.sh      # database first, then backend :8081 and frontend :5175
 open http://localhost:5175
 ```
 
-Stop everything with `./scripts/stop-all.sh`.
+`scripts/setup-db.sh` decides where the database lives: an existing server if you set `SF_DB_URL`, Docker if it is available, otherwise its own cluster inside `db/pgdata` on the first free port. Running it twice is harmless.
 
+Ports and credentials are environment variables with working defaults: `SF_DB_URL`, `SF_DB_USER`, `SF_DB_PASSWORD`, `SF_PORT`, `SF_WEB_PORT`.
+
+Stop everything with `./scripts/stop-all.sh`.
 ## Demo accounts (password `demo1234`)
 
 | Email | Role | Why it exists |
