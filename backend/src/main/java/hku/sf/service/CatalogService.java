@@ -34,11 +34,24 @@ public class CatalogService {
         this.socketService = socketService;
     }
 
+    /** LG, then G, then the numbered floors upward. Alphabetical order puts "3" before "LG". */
+    private static int floorRank(String level) {
+        String l = level == null ? "" : level.trim().toUpperCase();
+        if (l.equals("LG")) return 0;
+        if (l.equals("G")) return 1;
+        try {
+            return 10 + Integer.parseInt(l);
+        } catch (NumberFormatException e) {
+            return 900;
+        }
+    }
+
     @Transactional(readOnly = true)
     public List<Dtos.BuildingDto> tree() {
         return buildings.findAll().stream()
                 .map(b -> new Dtos.BuildingDto(b.id, b.code, b.name,
                         floors.findByBuildingIdOrderByLevel(b.id).stream()
+                                .sorted(java.util.Comparator.comparingInt(f -> floorRank(f.level)))
                                 .map(f -> new Dtos.FloorDto(f.id, f.level))
                                 .toList()))
                 .toList();
