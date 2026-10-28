@@ -19,13 +19,13 @@ count faults, and neither of them knows whether you can actually charge your lap
 Every socket carries a number, and the number is the unit the whole product turns on: a student reads it off the desk, staff read the same string in the repair queue, and the database refuses two sockets with the same one.
 
 ```
-CW-L1-A-S2-B
-building + floor + room   seat   socket
+CPD-LG01-0001        MW-T1-5445
+building  room  sequence
 ```
 
-- The first three parts are the room code, which already contains the building and the floor. Repeating them is on purpose: a sticker is read on its own, with no list beside it, so the number has to be enough to walk to the room.
-- The seat part is the seat's physical label, and the last letter is the socket on that seat, left to right as you sit down.
-- A number is assigned once. Renaming a room changes the name, not the number. Adding a seat takes the next number and never renumbers the sockets that already exist.
+- The building code and the room code are HKU's own. `CPD` and `LG01` are already on signage and in timetables, so nobody has to learn a second name for a place they already know.
+- The room code does not repeat the building, and the sequence is per room: `0001` upward, four digits.
+- A number is assigned once. Renaming a room or adding a seat does not renumber the sockets that already exist, because a sticker on a desk outlives a spreadsheet.
 
 ## How the loop keeps itself alive
 

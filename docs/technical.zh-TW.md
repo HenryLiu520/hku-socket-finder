@@ -34,9 +34,77 @@ flowchart TB
 | `floor` | 樓、樓層 | 樓層屬於樓 |
 | `room` | 房號、樓層、名稱 | 房號就是學生平時說出口的那個 |
 | `seat` | 房間、座位號、x、y | `x`、`y` 是留給以後的平面圖 |
-| `socket` | 編號、座位、類型、狀態、上次核查時間 | 整個設計的單位；`code` 唯一，形如 `CW-L1-A-S2-B`（房間編號 + 座位標籤 + 插座字母） |
+| `socket` | 編號、座位、類型、狀態、上次核查時間 | 整個設計的單位；`code` 唯一，形如 `CPD-LG01-0001`（樓號 + 房間號 + 四位序號） |
 | `report` | 插座、帳號、上報狀態、時間 | 為了「兩報才翻」和每天一次的限制 |
 | `repair` | 插座、維修人、備註、時間 | 誰在什麼時候修了什麼 |
+
+### Diagram
+
+```mermaid
+erDiagram
+    BUILDING ||--o{ FLOOR  : has
+    FLOOR    ||--o{ ROOM   : has
+    ROOM     ||--o{ SEAT   : has
+    SEAT     ||--o{ SOCKET : carries
+    SOCKET   ||--o{ REPORT : receives
+    ACCOUNT  ||--o{ REPORT : writes
+    SOCKET   ||--o{ REPAIR : closes
+    ACCOUNT  ||--o{ REPAIR : signs
+
+    BUILDING {
+        bigint  id   PK
+        varchar code UK
+        varchar name
+    }
+    FLOOR {
+        bigint  id          PK
+        bigint  building_id FK
+        varchar level
+        varchar plan_image
+    }
+    ROOM {
+        bigint  id       PK
+        bigint  floor_id FK
+        varchar code
+        varchar name
+    }
+    SEAT {
+        bigint  id      PK
+        bigint  room_id FK
+        varchar label
+        int     x
+        int     y
+    }
+    SOCKET {
+        bigint    id              PK
+        bigint    seat_id         FK
+        varchar   code            UK
+        varchar   kind
+        varchar   state
+        timestamp last_checked_at
+    }
+    ACCOUNT {
+        bigint  id            PK
+        varchar email         UK
+        varchar display_name
+        varchar role
+        varchar password_hash
+    }
+    REPORT {
+        bigint    id             PK
+        bigint    socket_id      FK
+        bigint    account_id     FK
+        varchar   reported_state
+        timestamp created_at
+    }
+    REPAIR {
+        bigint    id         PK
+        bigint    socket_id  FK
+        bigint    staff_id   FK
+        varchar   note
+        timestamp created_at
+    }
+```
 
 ## 四、規則
 
