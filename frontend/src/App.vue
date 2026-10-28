@@ -46,7 +46,7 @@ function signOut() {
 </script>
 
 <style scoped>
-.shell { min-height: 100%; display: flex; flex-direction: column; }
+.shell { min-height: 100%; display: flex; flex-direction: column; min-width: 0; }
 .bar { background: #fff; border-bottom: 1px solid var(--sf-line); position: sticky; top: 0; z-index: 10; }
 .bar-inner { display: flex; align-items: center; gap: 24px; height: 62px; }
 .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
@@ -60,5 +60,5 @@ function signOut() {
 .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
 .pill-s { background: #eef6f2; color: #0b6b4f; }
 .pill-m { background: #eef2ff; color: #3538cd; }
-.main { padding: 26px 20px 60px; flex: 1; }
+.main { padding: 26px 20px 60px; flex: 1; min-width: 0; width: 100%; }
 </style>

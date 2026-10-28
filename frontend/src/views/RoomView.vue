@@ -33,13 +33,13 @@
 
     <div class="table-wrap sf-card">
     <el-table :data="shown" style="width: 100%" empty-text="No sockets entered for this room yet">
-      <el-table-column label="Socket" min-width="170">
+      <el-table-column label="Socket" min-width="150">
         <template #default="{ row }"><code>{{ row.code }}</code></template>
       </el-table-column>
 
-      <el-table-column label="Seat" prop="seat" width="64" />
+      <el-table-column label="Seat" prop="seat" width="56" />
 
-      <el-table-column label="State" min-width="130">
+      <el-table-column label="State" min-width="118">
         <template #default="{ row }">
           <span class="state" :class="'s-' + row.state.toLowerCase()">
             <i class="dot"></i>{{ pretty(row.state) }}
@@ -47,20 +47,20 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Last changed" min-width="155">
+      <el-table-column label="Last changed" min-width="128">
         <template #default="{ row }">
           <span :class="{ old: row.stale }">{{ ago(row.lastCheckedAt) }}</span>
           <el-tag v-if="row.stale" type="warning" size="small" effect="plain" class="old-tag">old</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="Last report" min-width="150">
+      <el-table-column label="Last report" min-width="128">
         <template #default="{ row }">
           <span :class="{ never: !row.lastReportAt }">{{ ago(row.lastReportAt) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="" width="96" align="right">
+      <el-table-column label="" width="88" align="right">
         <template #default="{ row }">
           <el-button size="small" plain @click="open(row)">Report</el-button>
         </template>
@@ -179,7 +179,7 @@ onMounted(async () => {
 .title { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-top: 4px; flex-wrap: wrap; }
 .title > div { min-width: 0; }
 .title .el-button { flex: 0 0 auto; }
-.table-wrap { width: 100%; max-width: 100%; overflow-x: auto; border-radius: 10px; }
+.table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; border-radius: 10px; }
 .table-wrap :deep(.el-table) { border-radius: 10px; }
 h2 { margin: 2px 0 2px; font-size: 20px; letter-spacing: -.3px; }
 .summary { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; margin-bottom: 12px; }

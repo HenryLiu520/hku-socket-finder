@@ -6,7 +6,7 @@
         <p class="sf-muted">Rooms are sorted by how much is wrong with them. Faulty sockets first.</p>
       </div>
       <div class="tools">
-        <el-input v-model="q" placeholder="Search a room, e.g. CW-L1-B" clearable class="search" />
+        <el-input v-model="q" placeholder="Search, e.g. CW-L1-B" clearable class="search" />
       </div>
     </div>
 
@@ -144,7 +144,7 @@ onMounted(async () => {
 .head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; gap: 16px; flex-wrap: wrap; }
 h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.3px; }
 .tools { display: flex; align-items: center; gap: 10px; }
-.search { width: 220px; }
+.search { width: 240px; }
 .step { margin-bottom: 8px; }
 .step-label { display: block; font-size: 12px; font-weight: 650; letter-spacing: .3px; color: var(--sf-muted); margin-bottom: 8px; }
 .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
