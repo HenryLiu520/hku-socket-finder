@@ -2,49 +2,56 @@
   <div v-loading="loading">
     <div class="top">
       <el-button link @click="$router.push('/')">← All rooms</el-button>
-      <h2>{{ room.code }} · {{ room.name }}</h2>
-      <p class="sf-muted">{{ room.buildingName }} · {{ room.level }} · tap a socket to report it</p>
-    </div>
-
-    <div class="floor">
-      <div v-for="row in rows" :key="row.key" class="row">
-        <div v-for="seat in row.seats" :key="seat.id" class="seat sf-card">
-          <div class="seat-h">
-            <span class="label">Seat {{ seat.label }}</span>
-            <span v-if="!seat.sockets.length" class="sf-muted">no socket</span>
-          </div>
-          <div class="sockets">
-            <button
-              v-for="s in seat.sockets"
-              :key="s.id"
-              class="socket"
-              :class="'st-' + s.state.toLowerCase()"
-              @click="open(s, seat)"
-            >
-              <span class="ico">⏻{{ shortCode(s.code) }}</span>
-              <span class="txt">{{ pretty(s.state) }}</span>
-              <span class="age">{{ age(s) }}</span>
-            </button>
-          </div>
-        </div>
+      <div>
+        <h2>{{ room.code }} · {{ room.name }}</h2>
+        <p class="sf-muted">{{ room.buildingName }} · {{ room.level }} · {{ rows.length }} sockets</p>
       </div>
     </div>
 
-    <el-dialog v-model="dialog" width="420px" :title="'Seat ' + (current.seat ? current.seat.label : '')">
-      <div v-if="current.socket" class="dlg">
-        <p class="sf-muted code-line">Socket {{ current.socket.code }}</p>
-        <div class="state-line">
-          <el-tag :type="tagType(current.socket.state)" effect="light">{{ pretty(current.socket.state) }}</el-tag>
-          <span class="sf-muted">{{ age(current.socket) }}</span>
-        </div>
-        <p v-if="current.socket.stale" class="warn">
-          Last checked {{ current.socket.daysSinceCheck }} days ago. Treat it as old.
+    <el-table :data="rows" class="sf-card" empty-text="No sockets entered for this room yet">
+      <el-table-column label="Socket" width="200">
+        <template #default="{ row }"><code>{{ row.code }}</code></template>
+      </el-table-column>
+
+      <el-table-column label="Seat" prop="seat" width="80" />
+
+      <el-table-column label="State" width="150">
+        <template #default="{ row }">
+          <span class="state" :class="'s-' + row.state.toLowerCase()">
+            <i class="dot"></i>{{ pretty(row.state) }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="Updated" width="180">
+        <template #default="{ row }">
+          <span :class="{ old: row.stale }">{{ fmt(row.lastCheckedAt) }}</span>
+          <el-tag v-if="row.stale" type="warning" size="small" effect="plain" class="old-tag">old</el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="Latest report" width="180">
+        <template #default="{ row }">{{ fmt(row.lastReportAt) }}</template>
+      </el-table-column>
+
+      <el-table-column label="">
+        <template #default="{ row }">
+          <el-button size="small" plain @click="open(row)">Report</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog v-model="dialog" width="420px" :title="current ? current.code : ''">
+      <div v-if="current" class="dlg">
+        <p class="sf-muted">Seat {{ current.seat }} · {{ pretty(current.state) }}</p>
+        <p v-if="current.stale" class="warn">
+          Last checked {{ current.daysSinceCheck }} days ago. Treat it as old.
         </p>
         <p class="sf-muted">
           Two different students have to report the same thing within 24 hours before the state changes.
           You can report each socket once a day.
         </p>
-        <div v-if="canReport" class="actions">
+        <div v-if="current.myReportsToday === 0" class="actions">
           <el-button type="success" plain @click="report('WORKING')">It works</el-button>
           <el-button type="warning" plain @click="report('LOOSE')">Loose</el-button>
           <el-button type="danger" plain @click="report('NO_POWER')">No power</el-button>
@@ -57,117 +64,86 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import api, { errorText } from '../api'
-import { useAuth } from '../stores/auth'
 
 const route = useRoute()
-const auth = useAuth()
 const room = ref({ seats: [] })
+const rows = ref([])
 const loading = ref(true)
 const dialog = ref(false)
+const current = ref(null)
 const msg = ref('')
 const msgType = ref('success')
-const current = reactive({ socket: null, seat: null })
-
-const shortCode = (code) => (code ? code.split('-').pop() : '')
-
-const rows = computed(() => {
-  const byY = {}
-  for (const s of room.value.seats || []) {
-    const k = s.y || 0
-    ;(byY[k] = byY[k] || []).push(s)
-  }
-  return Object.keys(byY).sort().map((k) => ({
-    key: k,
-    seats: byY[k].sort((a, b) => (a.x || 0) - (b.x || 0))
-  }))
-})
-
-const canReport = computed(() => current.socket && current.socket.myReportsToday === 0)
 
 const WORDS = {
-  WORKING: 'works',
-  LOOSE: 'loose',
-  NO_POWER: 'no power',
-  BROKEN: 'broken',
-  REPAIRED: 'repaired',
-  UNKNOWN: 'not checked'
+  WORKING: 'Works',
+  LOOSE: 'Loose',
+  NO_POWER: 'No power',
+  BROKEN: 'Broken',
+  REPAIRED: 'Repaired',
+  UNKNOWN: 'Not checked'
 }
 
-function pretty(state) {
-  return WORDS[state] || state.toLowerCase()
-}
+const pretty = (s) => WORDS[s] || s
 
-function tagType(state) {
-  return { WORKING: 'success', LOOSE: 'warning', NO_POWER: 'danger', BROKEN: 'danger', REPAIRED: 'info', UNKNOWN: 'info' }[state] || 'info'
-}
-
-function age(s) {
-  if (!s.lastCheckedAt) return 'never checked'
-  if (s.daysSinceCheck === 0) return 'checked today'
-  return 'checked ' + s.daysSinceCheck + 'd ago'
+function fmt(t) {
+  if (!t) return '—'
+  const d = new Date(t)
+  return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
 }
 
 async function load() {
-  loading.value = true
-  try {
-    const { data } = await api.get('/rooms/' + route.params.id)
-    room.value = data
-  } finally {
-    loading.value = false
-  }
+  const { data } = await api.get('/rooms/' + route.params.id)
+  room.value = data
+  rows.value = (data.seats || []).flatMap((seat) =>
+    (seat.sockets || []).map((s) => ({ ...s, seat: seat.label }))
+  )
 }
 
-function open(socket, seat) {
-  current.socket = socket
-  current.seat = seat
+function open(row) {
+  current.value = row
   msg.value = ''
   dialog.value = true
 }
 
 async function report(state) {
   try {
-    const { data } = await api.post('/sockets/' + current.socket.id + '/report', { state })
-    current.socket = data.socket
-    msg.value = data.message
+    const { data } = await api.post('/sockets/' + current.value.id + '/report', { state })
     msgType.value = data.flipped ? 'success' : 'info'
+    msg.value = data.message
     await load()
+    current.value = rows.value.find((r) => r.id === current.value.id) || current.value
   } catch (e) {
-    msg.value = errorText(e)
     msgType.value = 'error'
+    msg.value = errorText(e)
   }
 }
 
-onMounted(load)
+onMounted(async () => {
+  try {
+    await load()
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style scoped>
-.top { margin-bottom: 18px; }
-h2 { margin: 6px 0 4px; font-size: 20px; letter-spacing: -.3px; }
-.floor { display: grid; gap: 14px; }
-.row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.seat { padding: 12px 12px 14px; }
-.seat-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.label { font-size: 12px; color: var(--sf-muted); font-weight: 600; letter-spacing: .02em; }
-.sockets { display: grid; gap: 8px; }
-.socket { display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 8px;
-  text-align: left; padding: 9px 10px; border-radius: 8px; border: 1px solid var(--sf-line);
-  background: #fff; cursor: pointer; font: inherit; }
-.socket:hover { border-color: #c3d2cb; }
-.ico { font-size: 13px; }
-.txt { font-size: 13px; font-weight: 600; }
-.age { font-size: 11.5px; color: var(--sf-muted); }
-.st-working { border-left: 3px solid #12b76a; }
-.st-loose { border-left: 3px solid #f79009; }
-.st-no_power { border-left: 3px solid #f04438; }
-.st-broken { border-left: 3px solid #f04438; }
-.st-repaired { border-left: 3px solid #444ce7; }
-.st-unknown { border-left: 3px solid #98a2b3; }
-.dlg { display: grid; gap: 10px; }
-.state-line { display: flex; align-items: center; gap: 10px; }
-.warn { color: #b54708; background: #fffaeb; border: 1px solid #fedf89; padding: 8px 10px; border-radius: 8px; font-size: 12.5px; margin: 0; }
-.actions { display: flex; gap: 10px; margin-top: 4px; }
-.alert { margin-top: 6px; }
+.top { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+h2 { margin: 2px 0 2px; font-size: 20px; letter-spacing: -.3px; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+.state { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #98a2b3; display: inline-block; }
+.s-working .dot { background: #12b76a; }
+.s-loose .dot { background: #f79009; }
+.s-no_power .dot { background: #f04438; }
+.s-broken .dot { background: #f04438; }
+.s-repaired .dot { background: #444ce7; }
+.old { color: #b54708; }
+.old-tag { margin-left: 6px; }
+.warn { color: #b54708; font-size: 13px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.alert { margin-top: 12px; }
 </style>

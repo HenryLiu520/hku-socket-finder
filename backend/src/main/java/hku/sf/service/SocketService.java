@@ -32,10 +32,14 @@ public class SocketService {
     }
 
     public Dtos.SocketDto toDto(SocketPoint s, LocalDateTime now, long reportsToday) {
+        return toDto(s, now, reportsToday, null);
+    }
+
+    public Dtos.SocketDto toDto(SocketPoint s, LocalDateTime now, long reportsToday, LocalDateTime lastReportAt) {
         Long days = Rules.daysSince(s.lastCheckedAt, now);
         return new Dtos.SocketDto(s.id, s.code, s.kind, s.state.name(), s.lastCheckedAt, days,
                 Rules.isStale(s.lastCheckedAt, now, staleDays), reportsToday,
-                Rules.reportsStillNeeded((int) reportsToday, reportsNeeded));
+                Rules.reportsStillNeeded((int) reportsToday, reportsNeeded), lastReportAt);
     }
 
     @Transactional

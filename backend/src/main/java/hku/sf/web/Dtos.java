@@ -19,7 +19,8 @@ public final class Dtos {
     public record RoomSummaryDto(Long id, String code, String name, int seats, int sockets, int working, int broken, int repaired) { }
 
     public record SocketDto(Long id, String code, String kind, String state, LocalDateTime lastCheckedAt,
-                            Long daysSinceCheck, boolean stale, long myReportsToday, int reportsStillNeeded) { }
+                            Long daysSinceCheck, boolean stale, long myReportsToday, int reportsStillNeeded,
+                            LocalDateTime lastReportAt) { }
     public record SeatDto(Long id, String label, int x, int y, List<SocketDto> sockets) { }
     public record RoomDto(Long id, String code, String name, String level, String buildingCode,
                           String buildingName, List<SeatDto> seats) { }

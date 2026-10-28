@@ -76,7 +76,8 @@ public class CatalogService {
                 for (SocketPoint sp : bySeat.getOrDefault(s.id, List.of())) {
                     sockets_++;
                     if (sp.state == SocketState.WORKING) working++;
-                    if (sp.state == SocketState.BROKEN) broken++;
+                    if (sp.state == SocketState.BROKEN || sp.state == SocketState.LOOSE
+                            || sp.state == SocketState.NO_POWER) broken++;
                     if (sp.state == SocketState.REPAIRED) repaired++;
                 }
             }
@@ -95,13 +96,21 @@ public class CatalogService {
         List<SocketPoint> ss = seatIds.isEmpty() ? List.of() : sockets.findBySeatIdIn(seatIds);
         Map<Long, List<SocketPoint>> bySeat = ss.stream().collect(Collectors.groupingBy(s -> s.seat.id));
 
+        // one query for every socket in the room, instead of one per socket
+        Map<Long, LocalDateTime> lastReport = new HashMap<>();
+        if (!ss.isEmpty()) {
+            for (Object[] row : reports.lastReportTimes(ss.stream().map(x -> x.id).toList())) {
+                lastReport.put((Long) row[0], (LocalDateTime) row[1]);
+            }
+        }
+
         List<Dtos.SeatDto> seatDtos = new ArrayList<>();
         for (Seat s : rs) {
             List<Dtos.SocketDto> socketDtos = new ArrayList<>();
             for (SocketPoint sp : bySeat.getOrDefault(s.id, List.of())) {
                 long mine = accountId == null ? 0
                         : reports.countBySocketIdAndAccountIdAndCreatedAtAfter(sp.id, accountId, now.minusHours(24));
-                socketDtos.add(socketService.toDto(sp, now, mine));
+                socketDtos.add(socketService.toDto(sp, now, mine, lastReport.get(sp.id)));
             }
             seatDtos.add(new Dtos.SeatDto(s.id, s.label, s.x, s.y, socketDtos));
         }
