@@ -34,6 +34,10 @@
 |---|---|
 | ![房間](docs/screens/02-room.png) | ![隊列](docs/screens/03-queue.png) |
 
+## 技術說明
+
+這份實作背後的設計，寫在這裡：[English](docs/technical.md) · [简体中文](docs/technical.zh-CN.md) · [繁體中文](docs/technical.zh-TW.md)。
+
 ## 技術棧
 
 技術棧：

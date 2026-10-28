@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# 三份 README 的结构必须一致：段落数、图片数、互链。任何一项不对就退出码 1。
+# 结构一致性检查：
+#   1) 三份 README 的节数 / 图片数 / 代码块数 / 互链必须一致
+#   2) 三份 technical 文档的节数 / 代码块数必须一致
+#   3) 每份 README 都要链到三份 technical 文档
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -7,33 +10,45 @@ cd "$ROOT"
 python3 - <<'PY'
 import re, sys
 
-files = ["README.md", "README.zh-CN.md", "README.zh-TW.md"]
-data = {}
-fail = False
-
-for f in files:
-    text = open(f, encoding="utf-8").read()
-    data[f] = {
+def stats(path):
+    text = open(path, encoding="utf-8").read()
+    return {
         "sections": len(re.findall(r"^## ", text, re.M)),
         "images": len(re.findall(r"!\[", text)),
-        "code_blocks": text.count("```") // 2,
-        "links_to_others": sum(1 for g in files if g != f and g in text),
+        "code": text.count("```") // 2,
+        "text": text,
     }
 
-base = data["README.md"]
-for f in files:
-    d = data[f]
-    ok = (d["sections"] == base["sections"]
-          and d["images"] == base["images"]
-          and d["code_blocks"] == base["code_blocks"]
-          and d["links_to_others"] == 2)
-    print(("OK   " if ok else "FAIL ") + f
-          + f"  sections={d['sections']} images={d['images']} code={d['code_blocks']} links={d['links_to_others']}")
+fail = False
+
+readmes = ["README.md", "README.zh-CN.md", "README.zh-TW.md"]
+docs = ["docs/technical.md", "docs/technical.zh-CN.md", "docs/technical.zh-TW.md"]
+
+base = stats(readmes[0])
+print("README 组")
+for f in readmes:
+    s = stats(f)
+    links = sum(1 for g in readmes if g != f and g in s["text"]) \
+            + sum(1 for g in docs if g in s["text"])
+    ok = (s["sections"] == base["sections"] and s["images"] == base["images"]
+          and s["code"] == base["code"] and links == 5)
+    print(("  OK   " if ok else "  FAIL ") + f +
+          f"  sections={s['sections']} images={s['images']} code={s['code']} links={links}")
+    fail = fail or not ok
+
+dbase = stats(docs[0])
+print("technical 组")
+for f in docs:
+    s = stats(f)
+    ok = s["sections"] == dbase["sections"] and s["code"] == dbase["code"]
+    print(("  OK   " if ok else "  FAIL ") + f +
+          f"  sections={s['sections']} code={s['code']}")
     fail = fail or not ok
 
 print()
 if fail:
-    print("三份 README 结构不一致：先补齐再提交。")
+    print("结构不一致：先补齐再提交。")
     sys.exit(1)
-print(f"三份结构一致（{base['sections']} 节 / {base['images']} 张图 / {base['code_blocks']} 段代码）。")
+print(f"一致：README {base['sections']} 节 / {base['images']} 图 / {base['code']} 代码块；"
+      f"technical {dbase['sections']} 节 / {dbase['code']} 代码块。")
 PY

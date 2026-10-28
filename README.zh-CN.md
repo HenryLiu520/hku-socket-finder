@@ -34,6 +34,10 @@
 |---|---|
 | ![房间](docs/screens/02-room.png) | ![队列](docs/screens/03-queue.png) |
 
+## 技术说明
+
+这份实现背后的设计，写在这里：[English](docs/technical.md) · [简体中文](docs/technical.zh-CN.md) · [繁體中文](docs/technical.zh-TW.md)。
+
 ## 技术栈
 
 技术栈：

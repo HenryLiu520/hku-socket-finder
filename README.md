@@ -34,6 +34,10 @@ Two details keep it turning. Every entry carries a date, so an old check looks o
 |---|---|
 | ![Room](docs/screens/02-room.png) | ![Queue](docs/screens/03-queue.png) |
 
+## Technical notes
+
+The design behind this build, written out: [English](docs/technical.md) · [简体中文](docs/technical.zh-CN.md) · [繁體中文](docs/technical.zh-TW.md).
+
 ## Stack
 
 Built with:
