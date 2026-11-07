@@ -1,0 +1,159 @@
+/* English — the source language. Every key here must exist in zh-CN and zh-TW
+   with exactly the same shape; scripts/i18n-check.mjs enforces that. */
+export default {
+  app: {
+    name: 'Socket Finder',
+    subtitle: 'CCST9003 · Group R21 · Chi Wah L1'
+  },
+  nav: {
+    find: 'Find a socket',
+    report: 'Report a fault',
+    queue: 'Repair queue',
+    signOut: 'Sign out',
+    student: 'Student',
+    maintenance: 'Maintenance'
+  },
+  lang: {
+    label: 'Language',
+    hint: 'Interface language'
+  },
+  common: {
+    error: 'Something went wrong',
+    old: 'old',
+    never: 'never',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    report: 'Report'
+  },
+  time: {
+    justNow: 'just now',
+    minAgo: '{n} min ago',
+    hourAgo: '{n} h ago',
+    yesterday: 'yesterday',
+    daysAgo: '{n} days ago',
+    neverChecked: 'never checked'
+  },
+  state: {
+    WORKING: 'Works',
+    LOOSE: 'Loose',
+    NO_POWER: 'No power',
+    BROKEN: 'Broken',
+    REPAIRED: 'Repaired',
+    UNKNOWN: 'Not checked'
+  },
+  stateLower: {
+    WORKING: 'works',
+    LOOSE: 'loose',
+    NO_POWER: 'no power',
+    BROKEN: 'broken',
+    REPAIRED: 'repaired',
+    UNKNOWN: 'not checked'
+  },
+  home: {
+    title: 'Find a socket',
+    intro: 'Rooms are sorted by how much is wrong with them. Faulty sockets first.',
+    search: 'Search, e.g. CW-L1-B',
+    stepBuilding: '1 · Building',
+    stepRoom: '2 · Room',
+    rooms: '{n} room | {n} rooms',
+    noRooms: 'No rooms on this floor yet.',
+    noMatch: 'No rooms match “{q}”.',
+    sockets: '{n} socket | {n} sockets',
+    open: 'Open →'
+  },
+  room: {
+    back: '← All rooms',
+    reportFault: 'Report a fault',
+    sockets: '{n} socket | {n} sockets',
+    statNoPower: '{n} no power',
+    statLoose: '{n} loose',
+    statWorking: '{n} working',
+    statUnknown: '{n} not checked',
+    statOld: '{n} old',
+    filterAll: 'All',
+    filterFaulty: 'Faulty',
+    filterOld: 'Old',
+    shown: '{n} shown',
+    colSocket: 'Socket',
+    colSeat: 'Seat',
+    colState: 'State',
+    colLastChanged: 'Last changed',
+    colLastReport: 'Last report',
+    colAction: 'Report',
+    empty: 'No sockets entered for this room yet',
+    oldTag: 'old',
+    dialogSeat: 'Seat {seat} · {state}',
+    dialogStale: 'Last checked {n} days ago. Treat it as old.',
+    dialogRule: 'Two different students have to report the same thing within 24 hours before the state changes. You can report each socket once a day.',
+    actWorks: 'It works',
+    actLoose: 'Loose',
+    actNoPower: 'No power',
+    alreadyReported: 'You already reported this socket today. Thanks.',
+    sentPending: 'Recorded. One more report from another student within 24 hours will change the state.',
+    sentFlipped: 'Confirmed. The state is now {state}.'
+  },
+  map: {
+    title: 'Floor plan',
+    aria: 'Floor plan with sockets marked',
+    works: 'works',
+    loose: 'loose',
+    noPower: 'no power',
+    notChecked: 'not checked',
+    windowWall: 'window wall',
+    entrance: 'entrance',
+    seat: 'seat {label}',
+    noSocket: 'no socket',
+    note: 'Tap a socket to report it. The four digits are the last four on the sticker.'
+  },
+  report: {
+    title: 'Report a fault',
+    intro: 'Pick the room, tap the socket. The number is on the sticker; typing it works too.',
+    step1: 'Building',
+    step2: 'Room',
+    step3: 'Socket',
+    step3hint: '— tap one, or type the number',
+    step4: 'What is wrong with it?',
+    buildingPlaceholder: 'Choose a building',
+    roomPlaceholder: 'Choose a room',
+    roomPlaceholderNoBuilding: 'Pick a building first',
+    socketPlaceholder: 'CW-L1-B-0001',
+    socketPlaceholderNoRoom: 'Pick a room first',
+    notFound: 'No socket with that number in {room}. Check the sticker, or tap one above.',
+    summary: '{code} · seat {seat} · now {state}',
+    submit: 'Send report',
+    quota: 'One report per socket per day, ten a day in total.',
+    sentPending: 'Recorded. One more report from another student within 24 hours will change the state.',
+    sentFlipped: 'Confirmed. The state is now {state}.'
+  },
+  maint: {
+    title: 'Repair queue',
+    intro: 'Sockets reported broken, oldest first. Marking one repaired is what students see next.',
+    open: '{n} open',
+    colBuilding: 'Building',
+    colRoom: 'Room',
+    colSeat: 'Seat',
+    colSocket: 'Socket',
+    colFault: 'Fault',
+    colBrokenFor: 'Broken for',
+    colReportedBy: 'Reported by',
+    colLastChecked: 'Last checked',
+    markRepaired: 'Mark repaired',
+    empty: 'Nothing reported broken right now',
+    day: '{n} day | {n} days',
+    student: '{n} student | {n} students',
+    dialogTitle: 'Mark repaired',
+    dialogNote: 'A note is optional, but it is the only record of what was actually wrong.',
+    notePlaceholder: 'e.g. replaced the socket plate',
+    repaired: 'Marked repaired'
+  },
+  login: {
+    title: 'Find a seat you can charge at.',
+    intro: 'Sign in to report a socket. Maintenance sees the same records from the other side.',
+    email: 'Email',
+    emailPlaceholder: 'you@connect.hku.hk',
+    password: 'Password',
+    signIn: 'Sign in',
+    demoNote: 'Demo accounts (password demo1234)',
+    needFields: 'Email and password, please'
+  }
+}

@@ -1,25 +1,23 @@
 <template>
   <div class="report">
     <div class="head">
-      <h2>Report a fault</h2>
-      <p class="sf-muted">
-        Pick the room, tap the socket. The number is on the sticker; typing it works too.
-      </p>
+      <h2>{{ t('report.title') }}</h2>
+      <p class="sf-muted">{{ t('report.intro') }}</p>
     </div>
 
     <div class="sf-card form">
       <div class="step">
-        <label><b>1</b> Building</label>
-        <el-select v-model="buildingId" placeholder="Choose a building" filterable class="wide" @change="onBuilding">
+        <label><b>1</b> {{ t('report.step1') }}</label>
+        <el-select v-model="buildingId" :placeholder="t('report.buildingPlaceholder')" filterable class="wide" @change="onBuilding">
           <el-option v-for="b in buildings" :key="b.id" :label="b.code + ' · ' + b.name" :value="b.id" />
         </el-select>
       </div>
 
       <div class="step">
-        <label><b>2</b> Room</label>
+        <label><b>2</b> {{ t('report.step2') }}</label>
         <el-select
           v-model="roomId"
-          :placeholder="buildingId ? 'Choose a room' : 'Pick a building first'"
+          :placeholder="buildingId ? t('report.roomPlaceholder') : t('report.roomPlaceholderNoBuilding')"
           filterable
           class="wide"
           :disabled="!buildingId"
@@ -35,37 +33,39 @@
       </div>
 
       <div class="step">
-        <label><b>3</b> Socket <span class="sf-muted small">— tap one, or type the number</span></label>
+        <label>
+          <b>3</b> {{ t('report.step3') }}
+          <span class="sf-muted small">{{ t('report.step3hint') }}</span>
+        </label>
 
         <RoomMap v-if="roomSeats.length" flat :seats="roomSeats" @pick="pick" />
 
         <el-input
           v-model="socketCode"
           :disabled="!roomId"
-          :placeholder="roomId ? 'CW-L1-B-0001' : 'Pick a room first'"
+          :placeholder="roomId ? t('report.socketPlaceholder') : t('report.socketPlaceholderNoRoom')"
           class="wide typed"
         />
 
         <p v-if="socketCode && !matched" class="line bad">
-          No socket with that number in {{ currentRoom ? currentRoom.code : 'this room' }}.
-          Check the sticker, or tap one above.
+          {{ t('report.notFound', { room: currentRoom ? currentRoom.code : '—' }) }}
         </p>
         <p v-else-if="matched" class="line good">
-          {{ matched.code }} · seat {{ matched.seat }} · now {{ word(matched.state) }}
+          {{ t('report.summary', { code: matched.code, seat: matched.seat, state: stateLabel(matched.state) }) }}
         </p>
       </div>
 
       <div class="step">
-        <label><b>4</b> What is wrong with it?</label>
+        <label><b>4</b> {{ t('report.step4') }}</label>
         <div class="states">
           <button class="pick-state" :class="{ on: state === 'WORKING' }" :disabled="!matched" @click="state = 'WORKING'">
-            <i class="dot d-green"></i> It works
+            <i class="dot d-green"></i> {{ t('room.actWorks') }}
           </button>
           <button class="pick-state" :class="{ on: state === 'LOOSE' }" :disabled="!matched" @click="state = 'LOOSE'">
-            <i class="dot d-amber"></i> Loose
+            <i class="dot d-amber"></i> {{ t('room.actLoose') }}
           </button>
           <button class="pick-state" :class="{ on: state === 'NO_POWER' }" :disabled="!matched" @click="state = 'NO_POWER'">
-            <i class="dot d-red"></i> No power
+            <i class="dot d-red"></i> {{ t('room.actNoPower') }}
           </button>
         </div>
       </div>
@@ -74,9 +74,9 @@
 
       <div class="actions">
         <el-button type="primary" size="large" :disabled="!canSubmit" :loading="busy" @click="submit">
-          Send report
+          {{ t('report.submit') }}
         </el-button>
-        <span class="sf-muted hint">One report per socket per day, ten a day in total.</span>
+        <span class="sf-muted hint">{{ t('report.quota') }}</span>
       </div>
     </div>
   </div>
@@ -84,10 +84,13 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import api, { errorText } from '../api'
+import { stateLabel } from '../i18n'
 import RoomMap from '../components/RoomMap.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 
 const buildings = ref([])
@@ -106,10 +109,6 @@ const msgType = ref('success')
 const matched = computed(() => socketOptions.value.find((s) => s.code === socketCode.value) || null)
 const currentRoom = computed(() => rooms.value.find((r) => r.id === roomId.value) || null)
 const canSubmit = computed(() => !!matched.value && !!state.value && !busy.value)
-
-const WORDS = { WORKING: 'works', LOOSE: 'loose', NO_POWER: 'no power', BROKEN: 'broken', REPAIRED: 'repaired', UNKNOWN: 'not checked' }
-const word = (s) => WORDS[s] || s
-const tail = (code) => (code ? code.split('-').pop() : '')
 
 async function onBuilding() {
   roomId.value = null
@@ -150,9 +149,10 @@ async function submit() {
   try {
     const { data } = await api.post('/sockets/' + matched.value.id + '/report', { state: state.value })
     msgType.value = data.flipped ? 'success' : 'info'
-    msg.value = data.message
+    const nextState = (data.socket && data.socket.state) || state.value
+    msg.value = t(data.flipped ? 'report.sentFlipped' : 'report.sentPending', { state: stateLabel(nextState) })
     const fresh = socketOptions.value.find((s) => s.code === matched.value.code)
-    if (fresh) fresh.state = data.socket.state
+    if (fresh) fresh.state = nextState
     state.value = ''
   } catch (e) {
     msgType.value = 'error'
@@ -181,40 +181,48 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.head { margin-bottom: 16px; }
-.head h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.3px; }
-.form { padding: 22px; max-width: 640px; display: flex; flex-direction: column; gap: 18px; }
+.head { margin-bottom: 18px; }
+.head h2 { margin: 0 0 5px; font-size: 22px; letter-spacing: -.4px; }
+.head .sf-muted { margin: 0; max-width: 60ch; line-height: 1.55; }
+.form { padding: 24px; max-width: 640px; display: flex; flex-direction: column; gap: 20px; }
 .step { display: flex; flex-direction: column; gap: 8px; }
-.step > label { font-size: 12.5px; font-weight: 600; color: var(--sf-muted); }
-.step > label b { display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 50%; background: #eef6f2; color: #0b6b4f; font-size: 10.5px; margin-right: 6px; }
+.step > label { font-size: 12.5px; font-weight: 650; color: var(--sf-muted); letter-spacing: .02em; }
+.step > label b {
+  display: inline-block; width: 17px; height: 17px; line-height: 17px; text-align: center;
+  border-radius: 50%; background: var(--sf-green-soft); color: var(--sf-green);
+  font-size: 10.5px; margin-right: 6px; box-shadow: inset 0 0 0 1px var(--sf-green-line);
+}
 .small { font-weight: 400; }
 .wide { width: 100%; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--sf-line); background: #fff; cursor: pointer; font: inherit; transition: .12s; }
 .chip b { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
 .chip span { font-size: 10.5px; color: var(--sf-muted); }
-.chip:hover { border-color: #c3d2cb; }
-.chip.on { border-color: #0b6b4f; box-shadow: 0 0 0 2px rgba(11,107,79,.12); }
-.st-working { border-left: 3px solid #12b76a; }
-.st-loose { border-left: 3px solid #f79009; }
-.st-no_power { border-left: 3px solid #f04438; }
-.st-repaired { border-left: 3px solid #444ce7; }
-.st-unknown { border-left: 3px solid #98a2b3; }
-.st-broken { border-left: 3px solid #f04438; }
+.chip:hover { border-color: var(--sf-green-line); }
+.chip.on { border-color: var(--sf-green); box-shadow: 0 0 0 2px rgba(2, 70, 56, .12); }
 .typed { margin-top: 2px; }
 .states { display: flex; gap: 8px; flex-wrap: wrap; }
-.pick-state { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 9px; border: 1px solid var(--sf-line); background: #fff; font: inherit; font-size: 13px; cursor: pointer; transition: .12s; }
-.pick-state:hover:not(:disabled) { border-color: #c3d2cb; }
-.pick-state.on { border-color: #0b6b4f; box-shadow: 0 0 0 2px rgba(11,107,79,.12); font-weight: 600; }
+.pick-state {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px;
+  border-radius: 10px; border: 1px solid var(--sf-line); background: #fff;
+  font: inherit; font-size: 13px; cursor: pointer; transition: .13s;
+  box-shadow: 0 1px 2px rgba(16, 40, 34, .04);
+}
+.pick-state:hover:not(:disabled) { border-color: var(--sf-green-line); box-shadow: var(--sf-shadow); }
+.pick-state.on { border-color: var(--sf-green); box-shadow: 0 0 0 2px rgba(2, 70, 56, .12); font-weight: 650; color: var(--sf-green); }
 .pick-state:disabled { opacity: .45; cursor: not-allowed; }
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 .d-green { background: #12b76a; }
 .d-amber { background: #f79009; }
 .d-red { background: #f04438; }
-.line { margin: 0; font-size: 12.5px; }
+.line { margin: 0; font-size: 12.5px; line-height: 1.55; }
 .bad { color: #b42318; }
-.good { color: #0b6b4f; }
+.good { color: var(--sf-green); }
 .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .hint { font-size: 12px; }
 .alert { margin-top: 2px; }
+@media (max-width: 820px) {
+  .form { padding: 18px; }
+  .head h2 { font-size: 19px; }
+}
 </style>

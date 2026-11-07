@@ -1,23 +1,23 @@
 <template>
   <div class="map-card" :class="{ 'sf-card': !flat, flat }">
     <div class="map-h">
-      <span class="t">Floor plan</span>
+      <span class="t">{{ t('map.title') }}</span>
       <span class="sf-muted legend">
-        <i class="d green"></i> works
-        <i class="d amber"></i> loose
-        <i class="d red"></i> no power
-        <i class="d grey"></i> not checked
+        <i class="d green"></i> {{ stateLabel('WORKING', true) }}
+        <i class="d amber"></i> {{ stateLabel('LOOSE', true) }}
+        <i class="d red"></i> {{ stateLabel('NO_POWER', true) }}
+        <i class="d grey"></i> {{ stateLabel('UNKNOWN', true) }}
       </span>
     </div>
 
-    <svg :viewBox="`0 0 ${W} ${H}`" class="plan" role="img" aria-label="Floor plan with sockets marked">
+    <svg :viewBox="`0 0 ${W} ${H}`" class="plan" role="img" :aria-label="t('map.aria')">
       <rect x="6" y="6" :width="W - 12" :height="H - 12" rx="14" class="room" />
-      <text x="20" y="26" class="edge">window wall</text>
-      <text :x="W - 20" :y="H - 12" class="edge end">entrance</text>
+      <text x="20" y="26" class="edge">{{ t('map.windowWall') }}</text>
+      <text :x="W - 20" :y="H - 12" class="edge end">{{ t('map.entrance') }}</text>
 
       <g v-for="d in desks" :key="d.key">
         <rect :x="d.x" :y="d.y" :width="DESK_W" :height="DESK_H" rx="7" class="desk" />
-        <text :x="d.x + 10" :y="d.y + 16" class="seat">seat {{ d.label }}</text>
+        <text :x="d.x + 10" :y="d.y + 16" class="seat">{{ t('map.seat', { label: d.label }) }}</text>
 
         <g v-for="(s, i) in d.sockets" :key="s.id" class="sock" @click="$emit('pick', s)">
           <title>{{ s.code }}</title>
@@ -27,16 +27,20 @@
                 class="num" :class="{ onlight: s.state === 'UNKNOWN' || s.state === 'REPAIRED' }">{{ tail(s.code) }}</text>
         </g>
 
-        <text v-if="!d.sockets.length" :x="d.x + 10" :y="d.y + 38" class="none">no socket</text>
+        <text v-if="!d.sockets.length" :x="d.x + 10" :y="d.y + 38" class="none">{{ t('map.noSocket') }}</text>
       </g>
     </svg>
 
-    <p class="sf-muted note">Tap a socket to report it. The four digits are the last four on the sticker.</p>
+    <p class="sf-muted note">{{ t('map.note') }}</p>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { stateLabel } from '../i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   seats: { type: Array, default: () => [] },
@@ -71,25 +75,26 @@ const desks = computed(() => {
 </script>
 
 <style scoped>
-.map-card { padding: 14px 16px 10px; margin-bottom: 16px; }
-.map-card.flat { padding: 0; margin-bottom: 0; }
-.map-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
-.t { font-size: 12.5px; font-weight: 650; letter-spacing: .3px; color: var(--sf-muted); }
-.legend { display: inline-flex; align-items: center; gap: 10px; font-size: 11.5px; }
+.map-card { padding: 15px 17px 11px; margin-bottom: 16px; }
+.map-card.flat { padding: 0; margin-bottom: 0; border: 0; box-shadow: none; background: transparent; }
+.map-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 5px; }
+.t { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--sf-muted); }
+.legend { display: inline-flex; align-items: center; gap: 10px; font-size: 11.5px; flex-wrap: wrap; }
 .d { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 4px; }
 .green { background: #12b76a; }
 .amber { background: #f79009; }
 .red { background: #f04438; }
 .grey { background: #98a2b3; }
-.plan { width: 100%; max-width: 640px; height: auto; display: block; margin: 0 auto; }
-.room { fill: #fcfdfc; stroke: #d5dcd8; stroke-width: 1.5; stroke-dasharray: 7 5; }
+.plan { width: 100%; max-width: 640px; height: auto; display: block; margin: 2px auto 0; }
+/* Semantic socket colours are unchanged; only the paper underneath them warms up. */
+.room { fill: #fbfdfb; stroke: #cfdad5; stroke-width: 1.5; stroke-dasharray: 7 5; }
 .edge { font-size: 9.5px; fill: #a6afaa; letter-spacing: .4px; }
 .edge.end { text-anchor: end; }
-.desk { fill: #fff; stroke: #dce3df; stroke-width: 1; }
+.desk { fill: #ffffff; stroke: #dde5e1; stroke-width: 1; }
 .seat { font-size: 9.5px; fill: #8a938e; letter-spacing: .3px; }
 .none { font-size: 9px; fill: #c3cbc7; }
 .sock { cursor: pointer; }
-.sock:hover .box { stroke: #0b6b4f; stroke-width: 1.5; }
+.sock:hover .box { stroke: var(--sf-green); stroke-width: 1.6; }
 .box { stroke: none; }
 .box.working { fill: #12b76a; }
 .box.loose { fill: #f79009; }
@@ -99,5 +104,5 @@ const desks = computed(() => {
 .box.unknown { fill: #eceff1; }
 .num { font-size: 9px; fill: #fff; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .2px; }
 .num.onlight { fill: #6b7280; }
-.note { margin: 4px 0 0; font-size: 11.5px; }
+.note { margin: 6px 0 0; font-size: 11.5px; }
 </style>

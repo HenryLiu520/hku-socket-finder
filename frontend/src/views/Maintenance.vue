@@ -2,50 +2,52 @@
   <div>
     <div class="head">
       <div>
-        <h2>Repair queue</h2>
-        <p class="sf-muted">Sockets reported broken, oldest first. Marking one repaired is what students see next.</p>
+        <h2>{{ t('maint.title') }}</h2>
+        <p class="sf-muted">{{ t('maint.intro') }}</p>
       </div>
-      <el-tag v-if="rows.length" type="danger" effect="plain">{{ rows.length }} open</el-tag>
+      <el-tag v-if="rows.length" type="danger" effect="plain">{{ t('maint.open', { n: rows.length }) }}</el-tag>
     </div>
 
-    <el-table :data="rows" v-loading="loading" class="sf-card" empty-text="Nothing reported broken right now">
-      <el-table-column prop="building" label="Building" width="110" />
-      <el-table-column prop="roomCode" label="Room" width="130" />
-      <el-table-column prop="seat" label="Seat" width="80" />
-      <el-table-column prop="code" label="Socket" width="170">
-        <template #default="{ row }"><code>{{ row.code }}</code></template>
-      </el-table-column>
-      <el-table-column label="Fault" width="110">
-        <template #default="{ row }">
-          <el-tag :type="row.state === 'NO_POWER' ? 'danger' : 'warning'" effect="plain" size="small">
-            {{ row.state === 'NO_POWER' ? 'No power' : 'Loose' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="Broken for" width="130">
-        <template #default="{ row }">
-          <b :class="{ old: row.daysBroken >= 7 }">{{ row.daysBroken }} day{{ row.daysBroken === 1 ? '' : 's' }}</b>
-        </template>
-      </el-table-column>
-      <el-table-column label="Reported by" width="120">
-        <template #default="{ row }">{{ row.reporters }} student{{ row.reporters === 1 ? '' : 's' }}</template>
-      </el-table-column>
-      <el-table-column label="Last checked" width="180">
-        <template #default="{ row }">{{ fmt(row.lastCheckedAt) }}</template>
-      </el-table-column>
-      <el-table-column label="">
-        <template #default="{ row }">
-          <el-button size="small" type="primary" plain @click="openRepair(row)">Mark repaired</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="table-wrap sf-card">
+      <el-table :data="rows" v-loading="loading" :empty-text="t('maint.empty')">
+        <el-table-column prop="building" :label="t('maint.colBuilding')" width="86" />
+        <el-table-column prop="roomCode" :label="t('maint.colRoom')" width="108" />
+        <el-table-column prop="seat" :label="t('maint.colSeat')" width="64" />
+        <el-table-column prop="code" :label="t('maint.colSocket')" width="140">
+          <template #default="{ row }"><code>{{ row.code }}</code></template>
+        </el-table-column>
+        <el-table-column :label="t('maint.colFault')" width="112">
+          <template #default="{ row }">
+            <el-tag :type="row.state === 'NO_POWER' ? 'danger' : 'warning'" effect="plain" size="small">
+              {{ stateLabel(row.state) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('maint.colBrokenFor')" width="106">
+          <template #default="{ row }">
+            <b :class="{ old: row.daysBroken >= 7 }">{{ t('maint.day', { n: row.daysBroken }, row.daysBroken) }}</b>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('maint.colReportedBy')" width="106">
+          <template #default="{ row }">{{ t('maint.student', { n: row.reporters }, row.reporters) }}</template>
+        </el-table-column>
+        <el-table-column :label="t('maint.colLastChecked')" width="154">
+          <template #default="{ row }">{{ fmt(row.lastCheckedAt) }}</template>
+        </el-table-column>
+        <el-table-column :label="''" min-width="126" align="right">
+          <template #default="{ row }">
+            <el-button size="small" type="primary" plain @click="openRepair(row)">{{ t('maint.markRepaired') }}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
-    <el-dialog v-model="dialog" title="Mark repaired" width="420px">
-      <p class="sf-muted">A note is optional, but it is the only record of what was actually wrong.</p>
-      <el-input v-model="note" type="textarea" :rows="3" placeholder="e.g. replaced the socket plate" />
+    <el-dialog v-model="dialog" :title="t('maint.dialogTitle')" width="440px">
+      <p class="sf-muted">{{ t('maint.dialogNote') }}</p>
+      <el-input v-model="note" type="textarea" :rows="3" :placeholder="t('maint.notePlaceholder')" />
       <template #footer>
-        <el-button @click="dialog = false">Cancel</el-button>
-        <el-button type="primary" :loading="busy" @click="confirm">Confirm</el-button>
+        <el-button @click="dialog = false">{{ t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="busy" @click="confirm">{{ t('common.confirm') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -53,8 +55,12 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import api, { errorText } from '../api'
+import { stateLabel } from '../i18n'
 import { ElMessage } from 'element-plus'
+
+const { t } = useI18n()
 
 const rows = ref([])
 const loading = ref(true)
@@ -89,7 +95,7 @@ async function confirm() {
   try {
     await api.post('/sockets/' + target.value.socketId + '/repair', { note: note.value })
     dialog.value = false
-    ElMessage.success('Marked repaired')
+    ElMessage.success(t('maint.repaired'))
     await load()
   } catch (e) {
     ElMessage.error(errorText(e))
@@ -102,7 +108,13 @@ onMounted(load)
 </script>
 
 <style scoped>
-.head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
-h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: -.3px; }
+.head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; gap: 14px; flex-wrap: wrap; }
+h2 { margin: 0 0 5px; font-size: 22px; letter-spacing: -.4px; }
+.head .sf-muted { margin: 0; max-width: 58ch; line-height: 1.55; }
+.table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; border-radius: var(--sf-radius); }
 .old { color: #b42318; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+@media (max-width: 820px) {
+  .head h2 { font-size: 19px; }
+}
 </style>

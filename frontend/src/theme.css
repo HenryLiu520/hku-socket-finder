@@ -1,20 +1,164 @@
+/*
+  Visual theme for Socket Finder.
+  The palette, the textured gradient background, the white cards and the hairline
+  gold accents are taken from the companion COMP1110 "Empty Classroom Plan" front end
+  (same author), which used the HKU green / gold pairing over a desaturated photo
+  backdrop. Here the backdrop is rebuilt in pure CSS so the app stays a single small
+  bundle: a soft green-to-paper gradient, a faint dot texture, and a warm gold wash in
+  the top-right corner. Only the visual layer lives here — layout is unchanged.
+*/
 :root {
-  --sf-ink: #1f2328;
-  --sf-muted: #6b7280;
-  --sf-line: #e5e7eb;
-  --sf-green: #0b6b4f;
-  --sf-paper: #f7f7f5;
+  /* brand */
+  --sf-green: #024638;
+  --sf-green-deep: #013a2e;
+  --sf-green-mid: #0b6b4f;
+  --sf-green-soft: #e6efed;
+  --sf-green-line: #cfe0db;
+  --sf-gold: #b49764;
+  --sf-gold-soft: #e6d9c0;
+  --sf-gold-wash: #f7f1e6;
+
+  /* neutrals */
+  --sf-ink: #1f2d2a;
+  --sf-muted: #6b7b77;
+  --sf-faint: #93a29d;
+  --sf-line: #e2e9e6;
+  --sf-line-soft: #eef2f0;
+  --sf-paper: #eef3f0;
+  --sf-card: #ffffff;
+
+  /* surfaces */
+  --sf-radius: 14px;
+  --sf-radius-sm: 9px;
+  --sf-shadow: 0 1px 2px rgba(16, 40, 34, .05), 0 14px 30px -22px rgba(16, 40, 34, .45);
+  --sf-shadow-lift: 0 2px 4px rgba(16, 40, 34, .06), 0 22px 38px -24px rgba(16, 40, 34, .50);
+
+  /* Element Plus: same green, so buttons and links stop looking foreign */
+  --el-color-primary: #024638;
+  --el-color-primary-light-3: #4d7e74;
+  --el-color-primary-light-5: #80a39c;
+  --el-color-primary-light-7: #b3c8c3;
+  --el-color-primary-light-8: #ccdad7;
+  --el-color-primary-light-9: #e6efed;
+  --el-color-primary-dark-2: #01382d;
+  --el-border-radius-base: 8px;
+  --el-text-color-primary: #1f2d2a;
+  --el-text-color-regular: #3d4b47;
+  --el-border-color: #dde5e2;
+  --el-border-color-light: #e6ebe9;
+  --el-border-color-lighter: #eef2f0;
+  --el-fill-color-blank: #ffffff;
 }
+
 /* Padding must not add to width: without this, .sf-wrap and .main are 40px wider
    than the window and the whole page scrolls sideways. */
 *, *::before, *::after { box-sizing: border-box; }
+
 html, body, #app { height: 100%; margin: 0; max-width: 100%; }
-body { overflow-x: hidden; }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang HK",
+               "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
   color: var(--sf-ink);
-  background: var(--sf-paper);
+  background-color: var(--sf-paper);
+  /* Base wash: green at the top left, warm gold at the top right, paper below. */
+  background-image:
+    radial-gradient(1250px 640px at 6% -14%, rgba(2, 70, 56, .26), transparent 64%),
+    radial-gradient(980px 560px at 98% -8%, rgba(180, 151, 100, .34), transparent 60%),
+    radial-gradient(900px 620px at 88% 108%, rgba(2, 70, 56, .14), transparent 62%),
+    linear-gradient(180deg, #e6eee9 0%, #f5f8f6 44%, #e4ebe7 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
-.sf-wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
-.sf-card { background: #fff; border: 1px solid var(--sf-line); border-radius: 10px; }
+
+/* Texture layer: a very faint dot grid, like the grain of the reference photo. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(2, 70, 56, .07) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: .9;
+}
+
+/* A single gold hairline across the very top of the window, as on the reference header. */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 30;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--sf-green) 0%, var(--sf-green) 34%, var(--sf-gold) 100%);
+}
+
+::selection { background: rgba(2, 70, 56, .16); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: #c9d5d0;
+  border-radius: 6px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: #a9b8b4; background-clip: content-box; }
+
+.sf-wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+/* Cards: white, rounded, hairline border, two-layer shadow (contact + ambient). */
+.sf-card {
+  background: var(--sf-card);
+  border: 1px solid var(--sf-line);
+  border-radius: var(--sf-radius);
+  box-shadow: var(--sf-shadow);
+}
+
 .sf-muted { color: var(--sf-muted); font-size: 13px; }
+
+/* Element Plus surfaces, re-skinned to match the cards. */
+.el-card {
+  border-radius: var(--sf-radius);
+  border-color: var(--sf-line);
+  box-shadow: var(--sf-shadow) !important;
+}
+.el-card__header { border-bottom-color: var(--sf-line-soft); }
+.el-table { border-radius: var(--sf-radius-sm); background: transparent; }
+.el-table th.el-table__cell {
+  background: #f6f9f7;
+  color: var(--sf-muted);
+  font-weight: 650;
+  font-size: 12px;
+  letter-spacing: .02em;
+}
+.el-table td.el-table__cell { color: var(--sf-ink); }
+.el-table__inner-wrapper::before { background-color: var(--sf-line-soft); }
+.el-button { border-radius: 8px; }
+.el-input__wrapper, .el-select__wrapper, .el-textarea__inner { border-radius: 8px; }
+.el-dialog { border-radius: 16px; box-shadow: 0 24px 60px -28px rgba(16, 40, 34, .55); }
+.el-dialog__title { font-weight: 650; letter-spacing: -.01em; }
+.el-alert { border-radius: 10px; }
+.el-alert--info.is-light { background: #eef4f1; color: #35564d; border: 1px solid #dfe9e5; }
+.el-alert--info.is-light .el-alert__icon { color: var(--sf-green); }
+.el-loading-mask { background-color: rgba(255, 255, 255, .62); backdrop-filter: blur(1px); }
+
+/* Section heading shared by the inner pages: small caps-ish label with a gold tick. */
+.sf-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--sf-muted);
+}
+.sf-kicker::before {
+  content: '';
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--sf-gold);
+}

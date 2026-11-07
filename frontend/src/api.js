@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { tt } from './i18n'
 
 const api = axios.create({ baseURL: '/api' })
 
@@ -22,7 +23,7 @@ api.interceptors.response.use(
 export function errorText(e) {
   const d = e && e.response && e.response.data
   if (d && d.message) return d.message
-  return 'Something went wrong'
+  return tt('common.error')
 }
 
 export default api

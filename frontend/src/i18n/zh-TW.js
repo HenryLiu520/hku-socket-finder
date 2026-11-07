@@ -1,0 +1,158 @@
+/* 繁體中文 —— 獨立撰寫，用語與簡體版分開處理（房間／上報／狀態／維修／檢查）。 */
+export default {
+  app: {
+    name: 'Socket Finder',
+    subtitle: 'CCST9003 · R21 組 · 智華 L1'
+  },
+  nav: {
+    find: '找插座',
+    report: '上報故障',
+    queue: '維修佇列',
+    signOut: '登出',
+    student: '學生',
+    maintenance: '維修'
+  },
+  lang: {
+    label: '語言',
+    hint: '介面語言'
+  },
+  common: {
+    error: '出了點問題',
+    old: '舊',
+    never: '從未',
+    cancel: '取消',
+    confirm: '確認',
+    report: '上報'
+  },
+  time: {
+    justNow: '剛剛',
+    minAgo: '{n} 分鐘前',
+    hourAgo: '{n} 小時前',
+    yesterday: '昨天',
+    daysAgo: '{n} 天前',
+    neverChecked: '從未檢查'
+  },
+  state: {
+    WORKING: '可用',
+    LOOSE: '鬆動',
+    NO_POWER: '沒電',
+    BROKEN: '損壞',
+    REPAIRED: '已修',
+    UNKNOWN: '未查'
+  },
+  stateLower: {
+    WORKING: '可用',
+    LOOSE: '鬆動',
+    NO_POWER: '沒電',
+    BROKEN: '損壞',
+    REPAIRED: '已修',
+    UNKNOWN: '未查'
+  },
+  home: {
+    title: '找插座',
+    intro: '房間依故障多寡排序，問題多的排在前面。',
+    search: '搜尋，例如 CW-L1-B',
+    stepBuilding: '1 · 選樓',
+    stepRoom: '2 · 選房間',
+    rooms: '{n} 個房間 | {n} 個房間',
+    noRooms: '這一層還沒有建立房間。',
+    noMatch: '沒有房間符合「{q}」。',
+    sockets: '{n} 個插座 | {n} 個插座',
+    open: '開啟 →'
+  },
+  room: {
+    back: '← 所有房間',
+    reportFault: '上報故障',
+    sockets: '{n} 個插座 | {n} 個插座',
+    statNoPower: '{n} 個沒電',
+    statLoose: '{n} 個鬆動',
+    statWorking: '{n} 個可用',
+    statUnknown: '{n} 個未查',
+    statOld: '{n} 個待複查',
+    filterAll: '全部',
+    filterFaulty: '故障',
+    filterOld: '待複查',
+    shown: '顯示 {n} 筆',
+    colSocket: '插座',
+    colSeat: '座位',
+    colState: '狀態',
+    colLastChanged: '最後變更',
+    colLastReport: '最後上報',
+    colAction: '上報',
+    empty: '這個房間還沒有建立插座',
+    oldTag: '待複查',
+    dialogSeat: '座位 {seat} · {state}',
+    dialogStale: '上次檢查是 {n} 天前，請當作舊資料。',
+    dialogRule: '需要兩位不同學生在 24 小時內回報同一個問題，狀態才會改變。每個插座每天可以上報一次。',
+    actWorks: '可以用',
+    actLoose: '鬆動',
+    actNoPower: '沒電',
+    alreadyReported: '你今天已經上報過這個插座了，謝謝。',
+    sentPending: '已記錄。還需要另一位學生在 24 小時內確認，狀態才會改變。',
+    sentFlipped: '已確認，狀態現在是{state}。'
+  },
+  map: {
+    title: '平面圖',
+    aria: '標有插座的房間平面圖',
+    works: '可用',
+    loose: '鬆動',
+    noPower: '沒電',
+    notChecked: '未查',
+    windowWall: '靠窗一側',
+    entrance: '入口',
+    seat: '座位 {label}',
+    noSocket: '沒有插座',
+    note: '點插座就能上報。四位數字是貼紙上的最後四位。'
+  },
+  report: {
+    title: '上報故障',
+    intro: '先選房間，再點插座。數字印在貼紙上，也可以直接輸入。',
+    step1: '選樓',
+    step2: '選房間',
+    step3: '選插座',
+    step3hint: '— 點一個，或輸入編號',
+    step4: '它出了什麼問題？',
+    buildingPlaceholder: '請選擇樓',
+    roomPlaceholder: '請選擇房間',
+    roomPlaceholderNoBuilding: '請先選樓',
+    socketPlaceholder: 'CW-L1-B-0001',
+    socketPlaceholderNoRoom: '請先選房間',
+    notFound: '{room} 裡沒有這個編號的插座。請核對貼紙，或者點上面的插座。',
+    summary: '{code} · 座位 {seat} · 目前{state}',
+    submit: '提交上報',
+    quota: '每個插座每天一次，每天最多十次。',
+    sentPending: '已記錄。還需要另一位學生在 24 小時內確認。',
+    sentFlipped: '已確認，狀態現在是{state}。'
+  },
+  maint: {
+    title: '維修佇列',
+    intro: '被回報損壞的插座，最早報的排在最前。標記為已修，就是學生下次看到的狀態。',
+    open: '{n} 個待修',
+    colBuilding: '樓',
+    colRoom: '房間',
+    colSeat: '座位',
+    colSocket: '插座',
+    colFault: '故障',
+    colBrokenFor: '損壞時長',
+    colReportedBy: '上報人數',
+    colLastChecked: '最後檢查',
+    markRepaired: '標記已修',
+    empty: '目前沒有報修的插座',
+    day: '{n} 天 | {n} 天',
+    student: '{n} 位學生 | {n} 位學生',
+    dialogTitle: '標記已修',
+    dialogNote: '備註可以不寫，但它是唯一記錄實際故障的地方。',
+    notePlaceholder: '例如：更換了插座面板',
+    repaired: '已標記為已修'
+  },
+  login: {
+    title: '找一個能充電的座位。',
+    intro: '登入後即可上報插座狀態。維修人員從另一邊看到同一份記錄。',
+    email: '電子郵件',
+    emailPlaceholder: 'you@connect.hku.hk',
+    password: '密碼',
+    signIn: '登入',
+    demoNote: '示範帳號（密碼 demo1234）',
+    needFields: '請填寫電子郵件和密碼'
+  }
+}
