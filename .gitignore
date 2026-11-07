@@ -22,3 +22,7 @@ db/
 *.docx
 *.pdf
 R21_*
+
+# python
+__pycache__/
+*.pyc
