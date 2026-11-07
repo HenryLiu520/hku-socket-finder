@@ -161,6 +161,7 @@ class Recorder:
                   source="localStorage.setItem('sf_token', %s);"
                          "localStorage.setItem('sf_user', %s);"
                          "localStorage.setItem('sf_lang', 'en');"
+                         "localStorage.setItem('sf_hide_lang', '1');"
                          % (json.dumps(session_state["token"]),
                             json.dumps(json.dumps({"displayName": session_state["displayName"],
                                                    "role": session_state["role"],

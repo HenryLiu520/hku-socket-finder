@@ -26,7 +26,7 @@ spring:
 app:
   cors-allowed-origin: ${SF_CORS_ORIGIN:http://localhost:5175}
   stale-days: 30
-  reports-needed: 2
+  reports-needed: ${SF_REPORTS_NEEDED:2}
   report-window-hours: 24
   reports-per-day: ${SF_REPORTS_PER_DAY:10}
 

@@ -83,7 +83,7 @@ export default {
     oldTag: '待复查',
     dialogSeat: '座位 {seat} · {state}',
     dialogStale: '上次检查是 {n} 天前，请当作旧数据。',
-    dialogRule: '需要两位不同学生在 24 小时内报告同一个问题，状态才会改变。每个插座每天可以上报一次。',
+    dialogRule: '上报已记录，维修人员会在队列里看到。',
     actWorks: '可以用',
     actLoose: '松动',
     actNoPower: '没电',

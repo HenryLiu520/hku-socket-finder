@@ -19,7 +19,7 @@
 
           <div class="tail">
             <!-- Language switch: three buttons, one tap each, no page reload. -->
-            <div class="langs" role="group" :aria-label="t('lang.label')">
+            <div v-if="!hideLang" class="langs" role="group" :aria-label="t('lang.label')">
               <button
                 v-for="l in languages"
                 :key="l.value"
@@ -44,7 +44,9 @@
       </header>
 
       <main class="sf-wrap main">
-        <router-view />
+        <div class="page-paper">
+          <router-view />
+        </div>
       </main>
     </div>
   </el-config-provider>
@@ -65,6 +67,8 @@ const auth = useAuth()
 const router = useRouter()
 
 const languages = SUPPORTED
+// The demo recording sets localStorage sf_hide_lang = '1' so the switch never appears on camera.
+const hideLang = localStorage.getItem('sf_hide_lang') === '1'
 const epLocales = { en, 'zh-CN': zhCn, 'zh-TW': zhTw }
 const epLocale = computed(() => epLocales[locale.value] || en)
 
@@ -144,7 +148,14 @@ function signOut() {
 .pill-s { background: var(--sf-green-soft); color: var(--sf-green); box-shadow: inset 0 0 0 1px var(--sf-green-line); }
 .pill-m { background: var(--sf-gold-wash); color: #7d6132; box-shadow: inset 0 0 0 1px var(--sf-gold-soft); }
 
-.main { padding: 26px 22px 64px; flex: 1; min-width: 0; width: 100%; }
+.main { padding: 18px 20px 56px; flex: 1; min-width: 0; width: 100%; }
+.page-paper {
+  background: rgba(252, 253, 252, .95);
+  border: 1px solid rgba(226, 233, 230, .85);
+  border-radius: 20px;
+  padding: 22px 24px 26px;
+  box-shadow: 0 30px 70px -52px rgba(2, 70, 56, .6);
+}
 
 /* Narrow windows: the header stacks instead of pushing the page sideways. */
 @media (max-width: 820px) {

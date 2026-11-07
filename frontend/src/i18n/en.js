@@ -84,7 +84,7 @@ export default {
     oldTag: 'old',
     dialogSeat: 'Seat {seat} · {state}',
     dialogStale: 'Last checked {n} days ago. Treat it as old.',
-    dialogRule: 'Two different students have to report the same thing within 24 hours before the state changes. You can report each socket once a day.',
+    dialogRule: 'Your report is saved. Staff see it in the queue.',
     actWorks: 'It works',
     actLoose: 'Loose',
     actNoPower: 'No power',

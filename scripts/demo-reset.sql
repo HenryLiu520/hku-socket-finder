@@ -34,7 +34,9 @@ $$ LANGUAGE plpgsql;
 
 -- CW L1-B is the room used in the video
 SELECT demo_report('CW-L1-B-0002', 'NO_POWER', 52);
-SELECT demo_report('CW-L1-B-0004', 'LOOSE', 2);
+-- 0004 is left unchecked on purpose: the demo reports it live, so it has to start grey
+DELETE FROM report WHERE socket_id = (SELECT id FROM socket WHERE code = 'CW-L1-B-0004');
+UPDATE socket SET state = 'UNKNOWN', last_checked_at = NULL WHERE code = 'CW-L1-B-0004';
 SELECT demo_report('CW-L1-B-0001', 'WORKING', 26);
 SELECT demo_report('CW-L1-A-0002', 'WORKING', 5);
 

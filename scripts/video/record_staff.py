@@ -31,7 +31,10 @@ try:
         rec.pump(2.6)
         rows = rec.js("document.querySelectorAll('tbody tr').length")
         if rows:
-            rec.js("document.querySelector('tbody tr button').click()")
+            # close the socket that was just reported (0004), not whatever is oldest
+            rec.js("(function(){var r=[...document.querySelectorAll('tbody tr')]"
+                   ".find(function(x){return /0004/.test(x.textContent)});"
+                   "var b=(r||document.querySelector('tbody tr')).querySelector('button'); b.click();})()")
             rec.pump(1.2)
             rec.js("(function(){var b=[...document.querySelectorAll('.el-dialog button')]"
                    ".find(function(x){return /confirm|mark/i.test(x.textContent)}); if(b) b.click();})()")
