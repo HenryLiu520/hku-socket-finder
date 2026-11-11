@@ -149,23 +149,33 @@ def fill_b1(cell):
            "without a closure, the loop stalls at step three.")
 
     heading(cell, "5. Report validation")
-    bullet(cell, "Corroboration threshold and daily cap.",
-           "A socket enters the maintenance queue only after two different accounts report "
-           "it, and no account may file more than ten reports a day. One person cannot flip "
-           "a room, and the cap bounds the noise.")
+    bullet(cell, "Credibility is the sum of the reporters' scores.",
+           "A state does not change because two people clicked; it changes when the weights of "
+           "the accounts behind it add up to 1.6 and lead every competing state by half again. "
+           "Only the three heaviest accounts in the last 72 hours are counted, a new account "
+           "carries weight 1.0, and the ceiling is 1.5, so no single account can move a socket "
+           "alone however good its score is.")
+    bullet(cell, "Disagreement is kept, not averaged.",
+           "If the reports name different faults and neither side clears the threshold, the "
+           "socket keeps the state it had and both reports stay on the record as disputed, "
+           "until a repair or a later check settles them. No account may file more than ten "
+           "reports a day, which bounds the noise.")
 
     heading(cell, "6. Reputation scoring")
-    bullet(cell, "The score is an error rate, not a count.",
-           "A report is settled when the socket is closed or checked again: if the repair "
-           "agrees with what was reported the report is confirmed; if it disagrees, or a "
-           "later check contradicts it, it is refuted. The score is confirmed divided by "
-           "settled, and a new account is held at neutral until it has five settled reports, "
-           "so an early mistake does not follow anybody around.")
-    bullet(cell, "The score is a weight, not a gate.",
-           "One report counts between half and one and a half of a neutral report, in "
-           "proportion to that score. Nobody is barred from reporting, and nobody can buy "
-           "weight with volume, because the daily cap limits volume and only settled reports "
-           "move the score.")
+    bullet(cell, "The score is a settled ratio with a prior.",
+           "A settled report is a yes or a no. The score is (confirmed + 2.5) divided by "
+           "(settled + 5), so a new account sits at 0.5 rather than at zero or at one, and only "
+           "moves once reports are settled; the student sees it as a number out of 100.")
+    bullet(cell, "The score is the weight, and the weight sets the bar.",
+           "Weight is 0.5 plus the score, so it runs from 0.5 to 1.5, and the corroboration "
+           "threshold of 1.6 is deliberately above that ceiling: two fresh accounts can change "
+           "a socket, one trusted account cannot. A score is therefore an influence on the "
+           "record, never a permission to edit it.")
+    bullet(cell, "Only settlement moves it.",
+           "Unsettled reports count for nothing, so filing more of them earns nothing. A repair "
+           "that agrees with a report confirms it, one that disagrees refutes it, and a repair "
+           "closed as no fault found refutes everybody who reported one, which is what keeps the "
+           "scores honest when nothing was wrong.")
 
 
 def fill_b2(cell):
@@ -264,11 +274,6 @@ def fill_b2(cell):
            "fixed and the content column is allowed to shrink, so a narrow laptop window "
            "scrolls the table instead of the page.")
 
-    heading(cell, "6. Scope boundary")
-    bullet(cell, "Explicitly out of scope.",
-           "No photo evidence and no push notification: the queue is a page staff open, not a "
-           "message they receive. Both are written down as the next iteration rather than "
-           "claimed as done.")
 
 
 def fill_sequence(cell):
