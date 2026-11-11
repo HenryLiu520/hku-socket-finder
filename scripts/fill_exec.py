@@ -116,11 +116,25 @@ def fill_b1(cell):
            "'CW-4-0002 is loose' and staff can close that exact socket, so the record "
            "becomes checkable instead of anecdotal.")
 
-    heading(cell, "3. State model")
-    bullet(cell, "Three states, each timestamped.",
-           "Works, loose, no power, with the time each state changed and the date each "
-           "socket was last checked. Loose is the common fault and the one a two-state map "
-           "hides.")
+    heading(cell, "3. Functional design")
+    bullet(cell, "Find a socket.",
+           "Building, then room, then the list and the plan together; every row carries the "
+           "number, the seat, the state and the date of the last check, so the question is "
+           "answered on one screen without opening anything else.")
+    bullet(cell, "Report a fault.",
+           "Four choices: building, room, socket number, what is wrong. Three taps from an "
+           "open room, and the colour of that socket changes on the spot.")
+    bullet(cell, "Read the queue.",
+           "Staff see one list ordered by how long a socket has been broken, with the number "
+           "of distinct accounts behind each row, so the list is a priority rather than an "
+           "inbox.")
+    bullet(cell, "Close a repair.",
+           "One action writes the repair, sets the socket to repaired and stamps the time, "
+           "which returns the room to a known state and closes the loop.")
+    bullet(cell, "Keep score.",
+           "Every settled report moves the account's score, the score weights the next "
+           "report, and badges mark the milestones, so the two mechanisms of the loop are "
+           "visible as functions rather than as rules.")
 
     heading(cell, "4. The loop, end to end")
     bullet(cell, "Four steps, one direction.",
@@ -155,35 +169,61 @@ def fill_b1(cell):
 
 
 def fill_b2(cell):
-    """The function, plus the second mechanism: what people do, and what rewards them."""
+    """Organize the five functions and show how each is implemented."""
     clear(cell)
     label(cell, "Chairperson", "Chenxi Yu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
-    body(cell, "Function layer: the steps a student and a facilities member perform, the loop "
-               "that connects them, the incentive that keeps people reporting, and how the "
-               "frontend implements all of it.")
+    body(cell, "Function layer: how the functions designed above are organized into screens, how "
+               "each one is implemented, the incentive that keeps people reporting, and how the "
+               "frontend carries all of it.")
 
-    heading(cell, "1. Student-facing navigation and reporting")
-    bullet(cell, "Three-level navigation, list and plan together.",
-           "Building, then room, then the socket list and the room plan side by side: the "
-           "list gives number, seat, state, the time the state changed and the time of the "
-           "last report; the plan puts the same colours on the desk they belong to.")
-    bullet(cell, "Report form with four fields.",
-           "Building, room, socket number, what is wrong. From an already open room it is "
-           "three taps, and the socket turns orange or red on the spot.")
+    heading(cell, "1. Function organization")
+    bullet(cell, "Three roles, five functions.",
+           "Students use find and report; staff use the queue and the closure; both see the "
+           "score. Each function owns one screen and one endpoint, so the navigation follows "
+           "the work rather than the database.")
+    bullet(cell, "One screen, one job.",
+           "Find, report, queue, close, score: five screens, none doing two jobs, so a URL can "
+           "be quoted in a conversation and a fault can be located by screen before anybody "
+           "reads the code.")
 
-    heading(cell, "2. Facilities-facing queue and closure")
-    bullet(cell, "Queue ordered by outage duration.",
-           "Sorted by how long a socket has been broken, each row showing how many distinct "
-           "accounts reported it, so a single frustrated report does not outrank a fault "
-           "five people agree on.")
-    bullet(cell, "Closure writes back to the record.",
-           "Marking a repair sets the socket to repaired, stamps the time, and the room page "
-           "shows the new state at once, which is what closes the loop.")
+    heading(cell, "2. Implementation of find and report")
+    bullet(cell, "Browse without arithmetic.",
+           "The building list and the room list answer with the counts already summed "
+           "(sockets, working, broken), so the browser renders a room card without fetching "
+           "its sockets first.")
+    bullet(cell, "One room, one request.",
+           "The room endpoint returns every seat and socket with its state, the time the state "
+           "changed and the time of the last report in a single response, which is what lets "
+           "the list and the plan draw from the same numbers.")
+    bullet(cell, "A report that cannot be malformed.",
+           "The three dropdowns are filled from the server, so an impossible combination "
+           "cannot be selected in the first place; the endpoint re-checks the socket code and "
+           "refuses one that does not exist.")
+    bullet(cell, "Corroboration counted, not assumed.",
+           "A second report from the same account on the same socket is ignored; the second "
+           "distinct account is what changes the state and puts the socket in the queue.")
 
-    heading(cell, "3. The incentive mechanism")
+    heading(cell, "3. Implementation of the queue and the closure")
+    bullet(cell, "The queue is built from the record.",
+           "Ordered by how long a socket has been broken, each row showing how many distinct "
+           "accounts reported it, so a single frustrated report does not outrank a fault five "
+           "people agree on.")
+    bullet(cell, "Closure in one transaction.",
+           "Closing a repair writes the repair row, sets the socket to repaired and stamps "
+           "both times together, so a half-closed socket cannot exist.")
+    bullet(cell, "Sign-in and roles.",
+           "Sign-in returns a token held in memory; the account row carries the role and the "
+           "service checks it on every write, so the staff queue and the student screens are "
+           "the same application behind one check.")
+    bullet(cell, "A demo that starts from zero.",
+           "scripts/demo-reset.sql empties reports and repairs, returns every socket to not "
+           "checked and replays a fixed set of reports through a small function, so the "
+           "demonstration begins from the same state every time.")
+
+    heading(cell, "4. The incentive mechanism")
     bullet(cell, "Rewards follow confirmed reports, not reports.",
            "A badge at the first ten confirmed reports, and a campus voucher at the end of "
            "term for the accounts that kept a floor accurate. Reporting more earns nothing "
@@ -193,34 +233,6 @@ def fill_b2(cell):
            "to be right about a socket that somebody later closed. That is what makes a "
            "stranger's report worth trusting, and what makes it worth his ten seconds: the "
            "loop is held up by these two mechanisms, not by goodwill.")
-
-    heading(cell, "4. Functional implementation")
-    bullet(cell, "Sign-in and roles.",
-           "Sign-in returns a token held in memory; the account row carries the role and the "
-           "service checks it on every write, so the staff queue and the student screens are "
-           "the same application behind one check.")
-    bullet(cell, "Browse without arithmetic.",
-           "The building list and the room list answer with the counts already summed "
-           "(sockets, working, broken), so the browser renders a room card without fetching "
-           "its sockets first.")
-    bullet(cell, "One room, one request.",
-           "The room endpoint returns every seat and socket with its state, the time the "
-           "state changed and the time of the last report in a single response, which is what "
-           "lets the list and the plan draw from the same numbers.")
-    bullet(cell, "A report that cannot be malformed.",
-           "The three dropdowns are filled from the server, so an impossible combination "
-           "cannot be selected in the first place; the endpoint re-checks the socket code and "
-           "refuses one that does not exist.")
-    bullet(cell, "Corroboration counted, not assumed.",
-           "A second report from the same account on the same socket is ignored; the second "
-           "distinct account is what changes the state and puts the socket in the queue.")
-    bullet(cell, "Closure in one transaction.",
-           "Closing a repair writes the repair row, sets the socket to repaired and stamps "
-           "both times together, so a half-closed socket cannot exist.")
-    bullet(cell, "A demo that starts from zero.",
-           "scripts/demo-reset.sql empties reports and repairs, returns every socket to not "
-           "checked and replays a fixed set of reports through a small function, so the "
-           "demonstration begins from the same state every time.")
 
     heading(cell, "5. Frontend implementation")
     bullet(cell, "One application, three roles.",
@@ -234,12 +246,12 @@ def fill_b2(cell):
     bullet(cell, "The plan is drawn, not photographed.",
            "RoomMap renders an inline SVG from the seat and socket coordinates in the "
            "database: outline, desks, and one colour block per socket labelled with the last "
-           "four digits of its number. No image assets to keep in step with the data, and "
-           "the labels stay legible at any zoom.")
+           "four digits of its number. No image assets to keep in step with the data, and the "
+           "labels stay legible at any zoom.")
     bullet(cell, "Three languages, one dictionary each.",
-           "English, simplified and traditional Chinese ship as separate dictionaries with "
-           "the same keys; the switch sits in the header and the choice persists, so a "
-           "screen never mixes two languages.")
+           "English, simplified and traditional Chinese ship as separate dictionaries with the "
+           "same keys; the switch sits in the header and the choice persists, so a screen "
+           "never mixes two languages.")
     bullet(cell, "The weight is visible, not hidden.",
            "An account shows its score and how many reports have been settled, and a report "
            "shows what it counted for once the socket is closed. A weight nobody can see is "
@@ -254,8 +266,8 @@ def fill_b2(cell):
 
     heading(cell, "6. Scope boundary")
     bullet(cell, "Explicitly out of scope.",
-           "No photo evidence and no push notification: the queue is a page staff open, not "
-           "a message they receive. Both are written down as the next iteration rather than "
+           "No photo evidence and no push notification: the queue is a page staff open, not a "
+           "message they receive. Both are written down as the next iteration rather than "
            "claimed as done.")
 
 
