@@ -3,11 +3,14 @@
 
   python3 scripts/fill_exec.py
 
-Reads 交件/R21_Plan.docx, writes 交件/R21_init_Plan_exec.docx. Only the technical
+Reads 交件/R21_Plan.docx, writes 交件/R21_init_Plan_exec.docx. Only the two technical
 sections, the presentation order and the video plan are written; the problem and the
-business sections stay as their owners left them. Formatting copies what is already
-in the table: bold "Chairperson"/"Details" labels at 12pt, numbered headings and
-bullets at 10pt, Times New Roman throughout.
+business sections stay as their owners left them.
+
+The technical part is two halves and nothing else: B_1 is the mechanism, with the
+shape of the system as its first point rather than a section of its own; B_2 is what
+the two sides actually see. Formatting copies the table: bold "Chairperson"/"Details"
+at 12pt, numbered headings and bullets at 10pt, Times New Roman.
 """
 import os
 import shutil
@@ -24,7 +27,6 @@ FONT = "Times New Roman"
 
 
 def clear(cell):
-    """Keep the first paragraph, drop the rest, so we can refill the cell."""
     for p in cell.paragraphs[1:]:
         p._element.getparent().remove(p._element)
     first = cell.paragraphs[0]
@@ -77,87 +79,102 @@ def fill_title(cell):
 
 
 def fill_b1(cell):
+    """The mechanism. Architecture is point one, not a heading of its own."""
     clear(cell)
     label(cell, "Chairperson", "Haoran Liu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
 
-    heading(cell, "1. The socket number")
-    bullet(cell, "One socket, one address.",
-           "CPD-LG01-0001 reads as building, room and a four-digit position inside the "
-           "room. It is assigned once and never reused, so a report, a repair and a "
-           "conversation all point at the same socket.")
-    bullet(cell, "Why this is the innovation.",
-           "A map without addresses cannot be argued with. With numbers, a student can say "
-           "'CW-4-0002 is loose' and staff can close that exact socket, which turns an "
-           "anecdote into a record that can be checked.")
+    heading(cell, "1. The shape of it, and why the shape matters")
+    bullet(cell, "Three parts, one place for rules.",
+           "A Vue frontend in the browser calls /api; a Spring Boot service answers; "
+           "PostgreSQL holds the record. Every read and every write goes through the "
+           "service, so the rules live in one file rather than in the screens: hiding a "
+           "button in the browser is not a permission.")
+    bullet(cell, "The schema is code.",
+           "Eight tables (building, floor, room, seat, socket, report, repair, account), "
+           "changed only by numbered migrations, V1 to V7, so a clone rebuilds the same "
+           "tables, the same seed and the same socket numbers without anybody remembering "
+           "a sequence of commands.")
+    bullet(cell, "Two ways to run it.",
+           "docker-compose brings the database, the service and the frontend up with "
+           "healthchecks and a named volume; scripts/setup-db.sh does the same job on a "
+           "machine with no Docker, which is how this was built.")
 
-    heading(cell, "2. Three states, and an age")
+    heading(cell, "2. One socket, one number")
+    bullet(cell, "The address.",
+           "CPD-LG01-0001 reads as building, room and a four-digit position inside the "
+           "room, assigned once and never reused. A report, a repair and a conversation "
+           "all point at the same socket, which is what a photograph cannot do.")
+    bullet(cell, "Why this is the innovation.",
+           "A map without addresses cannot be argued with. With numbers a student can say "
+           "'CW-4-0002 is loose' and staff can close that exact socket, so the record "
+           "becomes checkable instead of anecdotal.")
+
+    heading(cell, "3. Three states, and an age")
     bullet(cell, "Works, loose, no power.",
-           "Every state carries the time it last changed and every socket carries the date "
-           "it was last checked. Loose is the common fault, and it is the one a two-state "
+           "Every state carries the time it last changed, and every socket carries the "
+           "date it was last checked. Loose is the common fault and the one a two-state "
            "map hides.")
     bullet(cell, "Nothing is assumed.",
-           "A socket nobody has checked for weeks shows as not checked, not as working, so "
-           "the map fails honestly instead of quietly.")
+           "A socket nobody has checked for weeks is shown as not checked, not as working, "
+           "so the map fails honestly instead of quietly.")
 
-    heading(cell, "3. The rule that makes a report count")
-    bullet(cell, "Two accounts, one queue.",
+    heading(cell, "4. The rule that makes a report count")
+    bullet(cell, "Two accounts, then a queue.",
            "A socket enters the maintenance queue only after two different accounts report "
-           "it, and one account cannot file more than ten reports a day. One person cannot "
-           "flip a room, and the cap bounds the noise.")
+           "it, and no account may file more than ten reports a day. One person cannot flip "
+           "a room, and the cap bounds the noise.")
     bullet(cell, "Reputation is the history.",
            "Reports later confirmed by a repair, or by somebody else's check, raise the "
            "account; reports that did not hold up lower it. A higher score makes one report "
-           "worth more, which is why an accurate reporter is worth having.")
+           "worth more, which is the only reason to keep reporting accurately.")
 
 
 def fill_b2(cell):
+    """What the two sides see. No architecture here: that was point one of B_1."""
     clear(cell)
     label(cell, "Chairperson", "Haoran Liu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
 
-    heading(cell, "1. What is built")
-    bullet(cell, "Three parts.",
-           "A Spring Boot service, a PostgreSQL database and a Vue frontend, over eight "
-           "tables: building, floor, room, seat, socket, report, repair, account.")
-    bullet(cell, "Versioned schema.",
-           "Every change is a migration, V1 to V7, so a clone rebuilds the same tables, the "
-           "same seed and the same socket numbers without anybody remembering a sequence of "
-           "commands.")
-
-    heading(cell, "2. What a student does")
+    heading(cell, "1. The student side")
     bullet(cell, "Three levels down.",
-           "Building, then room, then the socket list and the room plan, colour-coded, with "
-           "the date each socket was last checked.")
-    bullet(cell, "Four choices.",
+           "Building, then room, then the socket list and the room plan side by side: the "
+           "list gives number, seat, state, the time the state changed and the time of the "
+           "last report; the plan puts the same colours on the desk they belong to.")
+    bullet(cell, "Reporting is four choices.",
            "Building, room, socket number, what is wrong. From an already open room it is "
-           "three taps.")
+           "three taps, and the socket turns orange or red on the spot.")
 
-    heading(cell, "3. What staff do")
-    bullet(cell, "One queue.",
-           "Ordered by how long a socket has been broken, with the number of distinct "
-           "accounts behind each row, so a single frustrated report does not outrank a fault "
+    heading(cell, "2. The staff side")
+    bullet(cell, "One queue, in order of neglect.",
+           "Sorted by how long a socket has been broken, each row showing how many distinct "
+           "accounts reported it, so a single frustrated report does not outrank a fault "
            "five people agree on.")
     bullet(cell, "Closing it changes the record.",
            "Marking a repair sets the socket to repaired, stamps the time, and the room page "
-           "shows the new state at once.")
+           "shows the new state at once, which is what closes the loop.")
 
-    heading(cell, "4. How it runs")
-    bullet(cell, "One command.",
-           "docker-compose brings up the database, the API and the frontend with healthchecks "
-           "and a named volume; scripts/setup-db.sh does the same job without Docker.")
-    bullet(cell, "Repeatable demo.",
-           "The demo data is a script, so the same four buildings and the same broken sockets "
-           "come back before every presentation.")
+    heading(cell, "3. Who may change what")
+    bullet(cell, "Two roles, checked on the server.",
+           "Students report and read; staff close. The check is in the service, not in the "
+           "interface, and an account is a role, not a person.")
+    bullet(cell, "No identity in any view.",
+           "A report shows a count of distinct accounts and a timestamp. No name, no device, "
+           "no history of one student's movements.")
 
-    heading(cell, "5. What is deliberately not there")
-    bullet(cell, "No photos, no push.",
-           "The queue is a page staff open, not a message they receive. Photo evidence and "
-           "notifications are written down as the next iteration, not claimed as done.")
+    heading(cell, "4. What was tested, and what is not there")
+    bullet(cell, "The loop, end to end.",
+           "Two accounts reporting the same socket, the socket entering the queue, a repair "
+           "closing it, and the room page showing the new state. Unit tests cover the state "
+           "rules; the demonstration is the running system, not slides.")
+    bullet(cell, "Deliberately missing.",
+           "No photo evidence and no push notification: the queue is a page staff open, not "
+           "a message they receive. Both are written down as the next iteration rather than "
+           "claimed as done.")
 
 
 def fill_sequence(cell):
@@ -216,7 +233,7 @@ def main():
 
     d = docx.Document(DST)
     t = d.tables[2]
-    cells = {r: t.rows[r].cells[0] for r in (2, 6, 8, 10, 15, 17, 19)}
+    cells = {r: t.rows[r].cells[0] for r in (2, 6, 8, 15, 17, 19)}
 
     fill_title(cells[2])
     fill_b1(cells[6])
