@@ -87,7 +87,8 @@ def fill_b1(cell):
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
     body(cell, "Logic layer: the data model, the numbering, the rules that determine a socket's "
-               "state, and the scoring that decides what one report is worth.")
+               "state, the scoring that decides what one report is worth, and the loop those "
+               "rules keep turning.")
 
     heading(cell, "1. System architecture and rule enforcement")
     bullet(cell, "Three-tier separation, rules held server-side.",
@@ -140,6 +141,18 @@ def fill_b1(cell):
            "weight with volume, because the daily cap limits volume and only settled reports "
            "move the score.")
 
+    heading(cell, "6. The loop, end to end")
+    bullet(cell, "Four steps, one direction.",
+           "A student reports what he sees; the socket enters the staff queue once a second "
+           "account agrees; staff repair and close it; the state and its timestamp change, "
+           "and the next student reads the corrected record before choosing a seat. Nothing "
+           "in the loop is edited by hand on the side.")
+    bullet(cell, "Why it repeats.",
+           "Each closed repair is also evidence that the report behind it was right, which "
+           "is what the reputation score is built from; the score weights the next report, "
+           "and the next report is what keeps the record usable. The queue is the pump: "
+           "without a closure, the loop stalls at step three.")
+
 
 def fill_b2(cell):
     """The function, plus the second mechanism: what people do, and what rewards them."""
@@ -170,19 +183,7 @@ def fill_b2(cell):
            "Marking a repair sets the socket to repaired, stamps the time, and the room page "
            "shows the new state at once, which is what closes the loop.")
 
-    heading(cell, "3. The loop, end to end")
-    bullet(cell, "Four steps, one direction.",
-           "A student reports what he sees; the socket enters the staff queue once a second "
-           "account agrees; staff repair and close it; the state and its timestamp change, "
-           "and the next student reads the corrected record before choosing a seat. Nothing "
-           "in the loop is edited by hand on the side.")
-    bullet(cell, "Why it repeats.",
-           "Each closed repair is also evidence that the report behind it was right, which "
-           "is what the reputation score is built from; the score weights the next report, "
-           "and the next report is what keeps the record usable. The queue is the pump: "
-           "without a closure, the loop stalls at step three.")
-
-    heading(cell, "4. The incentive mechanism")
+    heading(cell, "3. The incentive mechanism")
     bullet(cell, "Rewards follow confirmed reports, not reports.",
            "A badge at the first ten confirmed reports, and a campus voucher at the end of "
            "term for the accounts that kept a floor accurate. Reporting more earns nothing "
@@ -193,7 +194,7 @@ def fill_b2(cell):
            "stranger's report worth trusting, and what makes it worth his ten seconds: the "
            "loop is held up by these two mechanisms, not by goodwill.")
 
-    heading(cell, "5. Frontend implementation")
+    heading(cell, "4. Frontend implementation")
     bullet(cell, "One application, three roles.",
            "A Vue 3 single-page application built with Vite, routed with vue-router: the "
            "building list, the room view, the report form, the maintenance queue and the "
@@ -223,7 +224,7 @@ def fill_b2(cell):
            "fixed and the content column is allowed to shrink, so a narrow laptop window "
            "scrolls the table instead of the page.")
 
-    heading(cell, "6. Scope boundary")
+    heading(cell, "5. Scope boundary")
     bullet(cell, "Explicitly out of scope.",
            "No photo evidence and no push notification: the queue is a page staff open, not "
            "a message they receive. Both are written down as the next iteration rather than "
