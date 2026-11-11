@@ -17,6 +17,7 @@
       <span class="stat total">{{ t('room.sockets', { n: rows.length }, rows.length) }}</span>
       <span v-if="counts.noPower" class="stat c-red"><b>{{ counts.noPower }}</b> {{ stateLabel('NO_POWER', true) }}</span>
       <span v-if="counts.loose" class="stat c-amber"><b>{{ counts.loose }}</b> {{ stateLabel('LOOSE', true) }}</span>
+      <span v-if="counts.broken" class="stat c-red"><b>{{ counts.broken }}</b> {{ stateLabel('BROKEN', true) }}</span>
       <span v-if="counts.working" class="stat c-green"><b>{{ counts.working }}</b> {{ stateLabel('WORKING', true) }}</span>
       <span v-if="counts.unknown" class="stat c-grey"><b>{{ counts.unknown }}</b> {{ stateLabel('UNKNOWN', true) }}</span>
       <span v-if="counts.stale" class="stat c-amber"><b>{{ counts.stale }}</b> {{ t('common.old') }}</span>
@@ -111,10 +112,11 @@ const filter = ref('all')
 const FAULTY = ['LOOSE', 'NO_POWER', 'BROKEN']
 
 const counts = computed(() => {
-  const c = { noPower: 0, loose: 0, working: 0, unknown: 0, stale: 0 }
+  const c = { noPower: 0, loose: 0, broken: 0, working: 0, unknown: 0, stale: 0 }
   for (const r of rows.value) {
     if (r.state === 'NO_POWER') c.noPower++
     if (r.state === 'LOOSE') c.loose++
+    if (r.state === 'BROKEN') c.broken++
     if (r.state === 'WORKING') c.working++
     if (r.state === 'UNKNOWN') c.unknown++
     if (r.stale) c.stale++

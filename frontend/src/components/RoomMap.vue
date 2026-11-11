@@ -63,7 +63,10 @@ const H = computed(() => START_Y + rows.value * (DESK_H + GAP_Y) - GAP_Y + 40)
 
 /** A tidy schematic, three desks a row, rather than a projection of raw coordinates. */
 const desks = computed(() => {
-  const seats = (props.seats || []).filter((s) => s.label)
+  const seats = (props.seats || [])
+    .filter((s) => s.label)
+    .slice()
+    .sort((a, b) => (a.y ?? 0) - (b.y ?? 0) || (a.x ?? 0) - (b.x ?? 0))
   return seats.map((s, i) => ({
     key: s.id || i,
     label: s.label,
