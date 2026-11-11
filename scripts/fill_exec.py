@@ -86,59 +86,59 @@ def fill_b1(cell):
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
-    body(cell, "This half is the logic: what the record is made of, what decides a state, "
-               "and where those decisions are enforced.")
+    body(cell, "Logic layer: the data model, the rules that determine a socket's state, and where "
+               "those rules are enforced.")
 
-    heading(cell, "1. The shape of it")
-    bullet(cell, "Three parts, one place for rules.",
+    heading(cell, "1. System architecture and rule enforcement")
+    bullet(cell, "Three-tier separation, rules held server-side.",
            "A Vue frontend in the browser calls /api; a Spring Boot service answers; "
            "PostgreSQL holds the record. Every read and every write goes through the "
            "service, so the rules live in one file rather than in the screens: hiding a "
            "button in the browser is not a permission.")
-    bullet(cell, "The schema is code.",
+    bullet(cell, "Schema under migration control.",
            "Eight tables (building, floor, room, seat, socket, report, repair, account), "
            "changed only by numbered migrations, V1 to V7, so a clone rebuilds the same "
            "tables, the same seed and the same socket numbers without anybody remembering "
            "a sequence of commands.")
-    bullet(cell, "Two ways to run it.",
+    bullet(cell, "Two deployment paths.",
            "docker-compose brings the database, the service and the frontend up with "
            "healthchecks and a named volume; scripts/setup-db.sh does the same job on a "
            "machine with no Docker, which is how this was built.")
 
-    heading(cell, "2. One socket, one number")
-    bullet(cell, "The address.",
+    heading(cell, "2. Canonical socket identification")
+    bullet(cell, "Format and assignment rules.",
            "CPD-LG01-0001 reads as building, room and a four-digit position inside the "
            "room, assigned once and never reused. A report, a repair and a conversation "
            "all point at the same socket, which is what a photograph cannot do.")
-    bullet(cell, "Why this is the innovation.",
+    bullet(cell, "Design rationale.",
            "A map without addresses cannot be argued with. With numbers a student can say "
            "'CW-4-0002 is loose' and staff can close that exact socket, so the record "
            "becomes checkable instead of anecdotal.")
 
-    heading(cell, "3. Three states, and an age")
-    bullet(cell, "Works, loose, no power.",
+    heading(cell, "3. State model and record freshness")
+    bullet(cell, "Three states, each timestamped.",
            "Every state carries the time it last changed, and every socket carries the "
            "date it was last checked. Loose is the common fault and the one a two-state "
            "map hides.")
-    bullet(cell, "Nothing is assumed.",
+    bullet(cell, "Missing data is treated as unknown.",
            "A socket nobody has checked for weeks is shown as not checked, not as working, "
            "so the map fails honestly instead of quietly.")
 
-    heading(cell, "4. The rule that makes a report count")
-    bullet(cell, "Two accounts, then a queue.",
+    heading(cell, "4. Report validation and reputation scoring")
+    bullet(cell, "Corroboration threshold and daily cap.",
            "A socket enters the maintenance queue only after two different accounts report "
            "it, and no account may file more than ten reports a day. One person cannot flip "
            "a room, and the cap bounds the noise.")
-    bullet(cell, "Reputation is the history.",
+    bullet(cell, "Reputation derived from verified outcomes.",
            "Reports later confirmed by a repair, or by somebody else's check, raise the "
            "account; reports that did not hold up lower it. A higher score makes one report "
            "worth more, which is the only reason to keep reporting accurately.")
 
-    heading(cell, "5. Two roles, decided by the service")
-    bullet(cell, "Two roles, checked on the server.",
+    heading(cell, "5. Role-based access and anonymity")
+    bullet(cell, "Role separation enforced by the service.",
            "Students report and read; staff close. The check is in the service, not in the "
            "interface, and an account is a role, not a person.")
-    bullet(cell, "No identity in any view.",
+    bullet(cell, "No identity exposed in any view.",
            "A report shows a count of distinct accounts and a timestamp. No name, no device, "
            "no history of one student's movements.")
 
@@ -150,35 +150,35 @@ def fill_b2(cell):
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
-    body(cell, "This half is the function: what a student and a member of staff actually do, "
-               "in order, and where that stops.")
+    body(cell, "Function layer: the steps a student and a facilities member perform, in order, and "
+               "the boundary of the implemented scope.")
 
-    heading(cell, "1. The student side, step by step")
-    bullet(cell, "Three levels down.",
+    heading(cell, "1. Student-facing navigation and reporting")
+    bullet(cell, "Three-level navigation, list and plan together.",
            "Building, then room, then the socket list and the room plan side by side: the "
            "list gives number, seat, state, the time the state changed and the time of the "
            "last report; the plan puts the same colours on the desk they belong to.")
-    bullet(cell, "Reporting is four choices.",
+    bullet(cell, "Report form with four fields.",
            "Building, room, socket number, what is wrong. From an already open room it is "
            "three taps, and the socket turns orange or red on the spot.")
 
-    heading(cell, "2. The staff side, step by step")
-    bullet(cell, "One queue, in order of neglect.",
+    heading(cell, "2. Facilities-facing queue and closure")
+    bullet(cell, "Queue ordered by outage duration.",
            "Sorted by how long a socket has been broken, each row showing how many distinct "
            "accounts reported it, so a single frustrated report does not outrank a fault "
            "five people agree on.")
-    bullet(cell, "Closing it changes the record.",
+    bullet(cell, "Closure writes back to the record.",
            "Marking a repair sets the socket to repaired, stamps the time, and the room page "
            "shows the new state at once, which is what closes the loop.")
 
-    heading(cell, "3. The walkthrough we test")
-    bullet(cell, "The loop, end to end.",
+    heading(cell, "3. End-to-end validation")
+    bullet(cell, "Full cycle validated end to end.",
            "Two accounts reporting the same socket, the socket entering the queue, a repair "
            "closing it, and the room page showing the new state. Unit tests cover the state "
            "rules; the demonstration is the running system, not slides.")
 
-    heading(cell, "4. Where the function stops")
-    bullet(cell, "Deliberately missing.",
+    heading(cell, "4. Scope boundary")
+    bullet(cell, "Explicitly out of scope.",
            "No photo evidence and no push notification: the queue is a page staff open, not "
            "a message they receive. Both are written down as the next iteration rather than "
            "claimed as done.")
