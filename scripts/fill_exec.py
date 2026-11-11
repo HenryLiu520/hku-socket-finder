@@ -255,6 +255,25 @@ def fill_what_else(cell):
            "before it goes in.")
 
 
+def relabel_layers(d):
+    """Part 2 keeps every outline as it was; only the two technical titles gain a layer name."""
+    cell = d.tables[1].rows[5].cells[0]
+    names = {
+        "Technical aspect (1)": "Technical aspect (1) — logic layer",
+        "Technical aspect (2;  for a team with 5 members only)":
+            "Technical aspect (2; for a team with 5 members only) — function layer",
+    }
+    changed = []
+    for par in cell.paragraphs:
+        s = par.text.strip()
+        for old, new in names.items():
+            if s.startswith(old) and "layer" not in s:
+                if par.runs:
+                    par.runs[0].text = new + s[len(old):]
+                changed.append(new)
+    return changed
+
+
 def main():
     if not os.path.exists(BAK):
         shutil.copy2(SRC, BAK)
@@ -265,6 +284,7 @@ def main():
     t = d.tables[2]
     cells = {r: t.rows[r].cells[0] for r in (2, 6, 8, 15, 17, 19)}
 
+    relabel_layers(d)
     fill_title(cells[2])
     fill_b1(cells[6])
     fill_b2(cells[8])
