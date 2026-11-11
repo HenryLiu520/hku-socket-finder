@@ -1,6 +1,9 @@
 <template>
   <el-config-provider :locale="epLocale">
-    <div class="shell">
+    <!-- /m renders its own app shell: fixed top bar, fixed tab bar, no desktop chrome. -->
+    <router-view v-if="isMobile" />
+
+    <div v-else class="shell">
       <header class="bar">
         <div class="sf-wrap bar-inner">
           <div class="brand" @click="$router.push('/')">
@@ -55,7 +58,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from './stores/auth'
 import { SUPPORTED, setLocale } from './i18n'
 import en from 'element-plus/es/locale/lang/en'
@@ -64,7 +67,11 @@ import zhTw from 'element-plus/es/locale/lang/zh-tw'
 
 const { t, locale } = useI18n()
 const auth = useAuth()
+const route = useRoute()
 const router = useRouter()
+
+/* Routes under /m carry meta.mobile and render the handset shell themselves. */
+const isMobile = computed(() => route.matched.some((r) => r.meta && r.meta.mobile))
 
 const languages = SUPPORTED
 // The demo recording sets localStorage sf_hide_lang = '1' so the switch never appears on camera.

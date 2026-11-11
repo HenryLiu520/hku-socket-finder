@@ -59,3 +59,5 @@ psql -h 127.0.0.1 -p 5433 -d socketfinder -v ON_ERROR_STOP=1 -f scripts/demo-res
 
 It is safe to run repeatedly — it deletes before it inserts, and it leaves one socket unchecked on
 purpose so the demo can report it live and watch the state flip.
+
+The last two screens are the handset build, which lives at `/m` in the same application: four tabs (find, room, report, me), a fixed top bar and a tab bar, sized for a 390×844 screen.
