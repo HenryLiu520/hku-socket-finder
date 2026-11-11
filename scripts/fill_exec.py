@@ -121,20 +121,35 @@ def fill_b1(cell):
            "socket was last checked. Loose is the common fault and the one a two-state map "
            "hides.")
 
-    heading(cell, "4. Report validation and reputation scoring")
+    heading(cell, "4. Report validation")
     bullet(cell, "Corroboration threshold and daily cap.",
            "A socket enters the maintenance queue only after two different accounts report "
            "it, and no account may file more than ten reports a day. One person cannot flip "
            "a room, and the cap bounds the noise.")
-    bullet(cell, "Reputation derived from verified outcomes.",
-           "Reports later confirmed by a repair, or by somebody else's check, raise the "
-           "account; reports that did not hold up lower it. A higher score makes one report "
-           "worth more, which is the only reason to keep reporting accurately.")
 
-    heading(cell, "5. Role-based access")
-    bullet(cell, "Role separation enforced by the service.",
-           "Students report and read; staff close. The check is in the service, not in the "
-           "interface, and an account is a role, not a person.")
+    heading(cell, "5. Reputation scoring")
+    bullet(cell, "The score is an error rate, not a count.",
+           "A report is settled when the socket is closed or checked again: if the repair "
+           "agrees with what was reported the report is confirmed; if it disagrees, or a "
+           "later check contradicts it, it is refuted. The score is confirmed divided by "
+           "settled, and a new account is held at neutral until it has five settled reports, "
+           "so an early mistake does not follow anybody around.")
+    bullet(cell, "The score is a weight, not a gate.",
+           "One report counts between half and one and a half of a neutral report, in "
+           "proportion to that score. Nobody is barred from reporting, and nobody can buy "
+           "weight with volume, because the daily cap limits volume and only settled reports "
+           "move the score.")
+
+    heading(cell, "6. The incentive mechanism")
+    bullet(cell, "Rewards follow confirmed reports, not reports.",
+           "A badge at the first ten confirmed reports, and a campus voucher at the end of "
+           "term for the accounts that kept a floor accurate. Reporting more earns nothing "
+           "extra; being right does.")
+    bullet(cell, "Why this keeps the loop turning.",
+           "The score and the reward read the same number, so the only way to gain either is "
+           "to be right about a socket that somebody later closed. That is what makes a "
+           "stranger's report worth trusting, and what makes it worth his ten seconds: the "
+           "loop is held up by these two mechanisms, not by goodwill.")
 
 
 def fill_b2(cell):
@@ -200,12 +215,14 @@ def fill_b2(cell):
            "fixed and the content column is allowed to shrink, so a narrow laptop window "
            "scrolls the table instead of the page.")
 
-    heading(cell, "5. Why this layer is the innovation")
-    bullet(cell, "The record is drawn where the decision is made.",
-           "A student sees the number he will quote, the colour of the socket in front of him "
-           "and the date of the last check on one screen, and files a report in four choices "
-           "instead of a sentence. That is the difference between a map people consult and a "
-           "map people maintain: the interface and the record are the same object.")
+    heading(cell, "5. How the interface carries the two mechanisms")
+    bullet(cell, "The weight is visible, not hidden.",
+           "An account shows its score and how many reports have been settled; a report shows "
+           "what it counted for once the socket is closed. A weight that nobody can see is "
+           "indistinguishable from a rule that does not exist.")
+    bullet(cell, "The reward is a target, not a surprise.",
+           "A small panel lists the badges and what earns them, so the incentive points at a "
+           "number the student can watch move, which is the only way it can change behaviour.")
 
     heading(cell, "6. Scope boundary")
     bullet(cell, "Explicitly out of scope.",
