@@ -67,24 +67,48 @@ def phone(size, phone_w_ratio=0.62):
 
     # the battery: empty body in red, no fill, with the nub on the right
     bw, bh = int(pw * 0.46), int(pw * 0.20)
-    bx, by = W // 2 - bw // 2, H // 2 - bh // 2
+    bx, by = W // 2 - bw // 2, int(H * 0.335)
     r = max(6, bh // 6)
     rounded(d, [bx, by, bx + bw, by + bh], r, outline=RED, width=max(4, bh // 9))
+    fill_w = max(3, int((bw - 2 * max(4, bh // 9)) * 0.02))
+    rounded(d, [bx + max(4, bh // 9) + 1, by + max(4, bh // 9) + 1,
+                bx + max(4, bh // 9) + 1 + fill_w,
+                by + bh - max(4, bh // 9) - 1], 2, fill=RED)
     nub_w, nub_h = max(6, bw // 22), bh // 3
     rounded(d, [bx + bw + 6, by + (bh - nub_h) // 2, bx + bw + 6 + nub_w,
                 by + (bh + nub_h) // 2], 4, fill=RED)
 
     # 0% under it, and the line the phone says when it dies
     f0 = ImageFont.truetype(BOLD, int(pw * 0.16))
-    t0 = "0%"
+    t0 = "1%"
     tw = d.textbbox((0, 0), t0, font=f0)[2]
     d.text((W // 2 - tw // 2, by + bh + int(pw * 0.10)), t0, font=f0, fill=RED)
 
-    f1 = ImageFont.truetype(REG, int(pw * 0.055))
-    t1 = "No power. Plug in to continue."
-    tw1 = d.textbbox((0, 0), t1, font=f1)[2]
-    d.text((W // 2 - tw1 // 2, by + bh + int(pw * 0.16) + int(pw * 0.16)), t1,
-           font=f1, fill=DIM)
+    # the system alert a phone throws when the battery is about to die
+    card_w, card_h = int(pw * 0.86), int(pw * 0.42)
+    cx = W // 2 - card_w // 2
+    cy = by + bh + int(pw * 0.36)
+    rounded(d, [cx, cy, cx + card_w, cy + card_h], 22, fill=(28, 29, 31),
+            outline=(58, 60, 63), width=2)
+
+    f_t = ImageFont.truetype(BOLD, int(pw * 0.062))
+    f_b = ImageFont.truetype(REG, int(pw * 0.052))
+    t_l1 = "Your phone will shut down"
+    t_l2 = "in 30 seconds."
+    for i, line in enumerate((t_l1, t_l2)):
+        fnt = f_t if i == 0 else f_b
+        lw = d.textbbox((0, 0), line, font=fnt)[2]
+        d.text((W // 2 - lw // 2, cy + int(card_h * 0.16) + i * int(pw * 0.075)),
+               line, font=fnt, fill=INK if i == 0 else (206, 212, 214))
+
+    # divider and the one button, the way a system alert looks
+    div_y = cy + int(card_h * 0.66)
+    d.line([cx + 2, div_y, cx + card_w - 2, div_y], fill=(58, 60, 63), width=2)
+    f_ok = ImageFont.truetype(BOLD, int(pw * 0.056))
+    ok = "OK"
+    ow = d.textbbox((0, 0), ok, font=f_ok)[2]
+    d.text((cx + card_w - ow - int(pw * 0.06), div_y + int(card_h * 0.10)), ok,
+           font=f_ok, fill=(10, 132, 255))
 
     # vignette
     mask = Image.new("L", (W, H), 0)
