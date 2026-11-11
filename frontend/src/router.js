@@ -3,6 +3,7 @@ import Login from './views/Login.vue'
 import Rooms from './views/Rooms.vue'
 import RoomView from './views/RoomView.vue'
 import Maintenance from './views/Maintenance.vue'
+import Me from './views/Me.vue'
 import Report from './views/Report.vue'
 import MobileShell from './mobile/MobileShell.vue'
 import MFind from './mobile/views/MFind.vue'
@@ -15,6 +16,7 @@ const routes = [
   { path: '/', component: Rooms },
   { path: '/rooms/:id', component: RoomView },
   { path: '/report', component: Report },
+  { path: '/me', component: Me },
   { path: '/maintenance', component: Maintenance, meta: { maintenance: true } },
 
   /**

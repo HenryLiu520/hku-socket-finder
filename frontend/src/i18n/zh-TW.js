@@ -4,7 +4,22 @@ export default {
     name: 'Sure Socket',
     subtitle: 'CCST9003 · R21 組 · 智華 L1'
   },
+  me: {
+    title: '我的紀錄',
+    intro: '你的上報換來了什麼，下一個徽章還差多少。',
+    score: '信譽分',
+    scoreNote: '已證實的上報數除以已結算的上報數；不足五條結算前按 50 計。',
+    weight: '一條上報的分量',
+    confirmed: '已證實',
+    refuted: '被否定',
+    incentive: '激勵',
+    incentiveNote: '徽章按「被證實」的上報計算，而不是按提交條數：多報不加分，報對才進下一級。',
+    next: '再被證實 {n} 條可獲「{badge}」。',
+    allEarned: '所有徽章已到手。你維護的紀錄本身就是回報。',
+    badge: { starter: '起步', reliable: '可靠', trusted: '可信', steward: '守護者' }
+  },
   nav: {
+    me: '我的',
     phone: '手機版',
     find: '找插座',
     report: '上報故障',

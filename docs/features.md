@@ -20,6 +20,7 @@ Two roles, one build. A student finds a room, reads the state of each socket and
 | Try the demo accounts without typing credentials | Both | login page chips, from `GET /api/auth/demo-accounts` |
 | Work the repair queue, oldest check first, with the number of accounts behind each row | Maintenance | Repair queue (`/maintenance`) |
 | Close a fault, with an optional note | Maintenance | Mark repaired on the queue; `POST /api/sockets/{id}/repair` |
+| See your own record: score, weight, confirmed and refuted counts, and the badge you are working towards | Student | Your record (`/me`, and the fourth tab of the handset build) |
 
 ## Deliberately absent
 

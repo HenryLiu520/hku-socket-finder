@@ -18,6 +18,7 @@
             <router-link to="/" class="navlink">{{ t('nav.find') }}</router-link>
             <router-link to="/report" class="navlink">{{ t('nav.report') }}</router-link>
             <router-link v-if="auth.isMaintenance" to="/maintenance" class="navlink">{{ t('nav.queue') }}</router-link>
+            <router-link to="/me" class="navlink">{{ t('nav.me') }}</router-link>
             <!-- the handset build: same API, app-shaped shell -->
             <router-link to="/m" class="navlink navlink-phone">{{ t('nav.phone') }}</router-link>
           </nav>

@@ -51,6 +51,12 @@
         </div>
         <p class="m-fine m-stat-note">{{ t('mob.scoreHint') }}</p>
         <p class="m-fine">{{ t('mob.weightHint') }}</p>
+
+        <div class="m-badge">
+          <div class="m-bar"><span :style="{ width: (badge.progress * 100) + '%' }"></span></div>
+          <p class="m-fine" v-if="badge.next">{{ t('me.next', { n: badge.need, badge: t('me.badge.' + badge.next) }) }}</p>
+          <p class="m-fine" v-else>{{ t('me.allEarned') }}</p>
+        </div>
       </template>
     </div>
 
@@ -96,6 +102,7 @@
  * confirmed/refuted counts are shown together.
  */
 import { computed, onMounted, ref } from 'vue'
+import { BADGES, badgeFor } from '../../lib/reputation'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import api, { errorText } from '../../api'

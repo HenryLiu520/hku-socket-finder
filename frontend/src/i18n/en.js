@@ -5,7 +5,22 @@ export default {
     name: 'Sure Socket',
     subtitle: 'CCST9003 · Group R21 · Chi Wah L1'
   },
+  me: {
+    title: 'Your record',
+    intro: 'What your reports have earned, and what the next badge costs.',
+    score: 'Score',
+    scoreNote: 'Confirmed reports divided by settled reports, held near 50 until five are settled.',
+    weight: 'One report weighs',
+    confirmed: 'Confirmed',
+    refuted: 'Refuted',
+    incentive: 'Incentive',
+    incentiveNote: 'Badges are counted in confirmed reports, not in reports filed: filing more earns nothing, being right earns the next one.',
+    next: '{n} more confirmed report(s) for {badge}.',
+    allEarned: 'Every badge earned. The record you keep is the reward.',
+    badge: { starter: 'Starter', reliable: 'Reliable', trusted: 'Trusted', steward: 'Steward' }
+  },
   nav: {
+    me: 'Your record',
     phone: 'Phone',
     find: 'Find a socket',
     report: 'Report a fault',

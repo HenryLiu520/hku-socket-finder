@@ -4,7 +4,22 @@ export default {
     name: 'Sure Socket',
     subtitle: 'CCST9003 · R21 组 · 智华 L1'
   },
+  me: {
+    title: '我的记录',
+    intro: '你的上报换来了什么，下一个徽章还差多少。',
+    score: '信誉分',
+    scoreNote: '已证实的上报数除以已结算的上报数；不足五条结算前按 50 计。',
+    weight: '一条上报的分量',
+    confirmed: '已证实',
+    refuted: '被否定',
+    incentive: '激励',
+    incentiveNote: '徽章按“被证实”的上报计算，而不是按提交条数：多报不加分，报对才进下一级。',
+    next: '再被证实 {n} 条可获「{badge}」。',
+    allEarned: '所有徽章已到手。你维护的记录本身就是回报。',
+    badge: { starter: '起步', reliable: '可靠', trusted: '可信', steward: '守护者' }
+  },
   nav: {
+    me: '我的',
     phone: '手机版',
     find: '找插座',
     report: '上报故障',
