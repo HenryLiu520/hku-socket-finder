@@ -23,7 +23,7 @@ The unit is the socket, not the room: a mostly-fine room is no use when the free
 Nothing is sensed and nothing is kept by hand: each step rewards the next person.
 
 1. A student opens a room and sees each socket's last check.
-2. A dead one is reported in one tap: no photo, no comment, no account.
+2. A dead one is reported in three taps from the room: what is wrong, no photo, no free text.
 3. A second student agrees, and only then does the state change.
 4. Staff take the queue oldest first and mark each socket repaired.
 5. The next student sees the repair and its date, and checks again.
@@ -86,7 +86,7 @@ Password `demo1234` for `student1@connect.hku.hk` and `student2@connect.hku.hk` 
 | [Why the state can be trusted](docs/trust.md) | The evidence rule in numbers, the rate limits, the known limits | 5 min |
 | [Features](docs/features.md) | Every capability, per role, and where to see it | 3 min |
 | [Architecture](docs/architecture.md) | Three processes, the rules, and the path a report takes | 5 min |
-| [Screens](docs/screens.md) | All 6 screens, desktop and phone | 1 min |
+| [Screens](docs/screens.md) | The screens, desktop and phone | 1 min |
 | [Technical reference](docs/technical.md) | Schema, endpoints, rules as code, what comes next | 12 min |
 | [Deployment](docs/deployment.md) | Docker, environment variables, backup, reset, failures | 6 min |
 

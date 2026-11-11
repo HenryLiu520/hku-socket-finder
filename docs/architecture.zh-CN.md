@@ -32,7 +32,7 @@ flowchart LR
         C["控制器<br/>token 与角色"]
         S["服务层<br/>SocketService · CatalogService · AuthService"]
         R["规则<br/>纯函数"]
-        F["Flyway V1–V8"]
+        F["Flyway V1–V9"]
     end
     D[("db · PostgreSQL 17")]
     B -->|"GET /rooms/4"| N
@@ -86,7 +86,7 @@ flowchart LR
 ```
 socket-finder/
 ├── backend/src/main/java/hku/sf/              web · service · repo · domain · config
-├── backend/src/main/resources/db/migration/   V1–V8，先建结构再灌种子
+├── backend/src/main/resources/db/migration/   V1–V9，先建结构再灌种子
 ├── frontend/src/                              views · components · i18n · stores
 ├── frontend/nginx.conf                        静态文件、SPA 回退、/api 代理
 ├── docs/                                      这些页面、截图、循环图

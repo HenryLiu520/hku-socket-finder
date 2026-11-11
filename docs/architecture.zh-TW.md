@@ -32,7 +32,7 @@ flowchart LR
         C["Controllers<br/>token and role"]
         S["Services<br/>SocketService · CatalogService · AuthService"]
         R["Rules<br/>pure functions"]
-        F["Flyway V1–V8"]
+        F["Flyway V1–V9"]
     end
     D[("db · PostgreSQL 17")]
     B -->|"GET /rooms/4"| N
@@ -86,7 +86,7 @@ Service 擁有交易和寫入，controller 擁有身分驗證和角色檢查，r
 ```
 socket-finder/
 ├── backend/src/main/java/hku/sf/          web · service · repo · domain · config
-├── backend/src/main/resources/db/migration/   V1–V8, schema then seed
+├── backend/src/main/resources/db/migration/   V1–V9, schema then seed
 ├── frontend/src/                          views · components · i18n · stores
 ├── frontend/nginx.conf                    static files, SPA fallback, /api proxy
 ├── docs/                                  these pages, screenshots, loop diagrams

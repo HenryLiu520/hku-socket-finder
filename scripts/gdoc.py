@@ -122,6 +122,29 @@ def cmd_bold(docs, doc_id, table_i, row_i, col_i, needle):
     print("bolded %r (%d-%d)" % (needle, start, end))
 
 
+def cmd_replace_any(docs, doc_id, old, new):
+    """Find the cell that holds a string and swap it there, table and row unknown."""
+    doc = fetch(docs, doc_id)
+    for ti, t in enumerate(tables(doc)):
+        for ri, row in enumerate(t.get("tableRows", [])):
+            for ci, cell in enumerate(row.get("tableCells", [])):
+                text, index_of = _char_map(cell.get("content", []))
+                pos = text.find(old)
+                if pos < 0:
+                    continue
+                start = index_of[pos]
+                end = index_of[pos + len(old) - 1] + 1
+                body = {"requests": [
+                    {"deleteContentRange": {"range": {"startIndex": start, "endIndex": end}}},
+                    {"insertText": {"location": {"index": start}, "text": new}},
+                ]}
+                docs.documents().batchUpdate(documentId=doc_id, body=body).execute()
+                print("replaced in table %d row %d: %r" % (ti, ri, old[:50]))
+                return True
+    print("NOT FOUND: %r" % old[:70])
+    return False
+
+
 def cmd_replace_body(docs, doc_id, old, new):
     """Same swap, but anywhere in the body paragraphs instead of one table cell."""
     doc = fetch(docs, doc_id)
@@ -187,6 +210,8 @@ def main():
         cmd_append(docs, doc_id, int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6])
     elif cmd == "bold":
         cmd_bold(docs, doc_id, int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6])
+    elif cmd == "replace-any":
+        cmd_replace_any(docs, doc_id, sys.argv[3], sys.argv[4])
     elif cmd == "replace-body":
         cmd_replace_body(docs, doc_id, sys.argv[3], sys.argv[4])
     elif cmd == "replace":

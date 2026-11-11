@@ -12,7 +12,7 @@ Two roles, one build. A student finds a room, reads the state of each socket and
 | See every socket in a room on a plan, coloured by state | Student | Room view — an SVG plan drawn from the room's seats and sockets |
 | Read how old the last check is | Student | Room view — "last changed" column, with the "old" tag |
 | Filter the list to All / Faulty / Old | Student | Room view — the filter above the table |
-| Report works, loose or no power in one tap | Student | tap a socket on the plan, or `POST /api/sockets/{id}/report` |
+| Report works, loose or no power in three taps from an open room | Student | tap a socket on the plan, or `POST /api/sockets/{id}/report` |
 | Report by typing the socket number instead of tapping | Student | Report a fault (`/report`), step 3 |
 | See how far a claim got toward the 1.6 threshold | Student | the message returned after sending a report |
 | Sign in and be routed by role | Both | Login (`/login`); `/maintenance` sends a student home |
