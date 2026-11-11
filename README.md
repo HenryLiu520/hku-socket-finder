@@ -1,158 +1,166 @@
 # Sure Socket
 
-**Find a seat you can charge at.** A web app that tells a student, before they sit down, whether the power socket at that desk works.
+**Know the socket works before you sit down.** A web app that tells a student whether the power socket at a given desk is live — and hands the estates office an ordered list of the ones that are not.
 
 English · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
 
-![Find a socket](docs/screens/01-find.png)
+![Find a socket: buildings, rooms, and how many sockets in each room are working](docs/screens/desktop/01-find-a-socket.jpg)
 
 ## What this is
 
-A HKU CCST9003 group project (Group R21). This repository is **iteration 1**: one socket, end to end.
-Open a room, open a socket, report it broken, watch the state flip.
+Sure Socket answers one question at the moment it matters: *can I charge my laptop at this desk?* You pick a building, then a room. The room shows a plan of its desks with every socket coloured by its last known state, plus a list you can filter down to the faulty ones and to the checks that are getting old.
 
-The unit of the design is the socket, not the room. Booking systems count rooms and desks, repair systems
-count faults, and neither of them knows whether you can actually charge your laptop there.
+A room that is "mostly fine" is no help when the only free desk is the dead one. So the unit of the product is the socket: each one carries its own number, its own state, its own last-checked date, and its own history of reports and repairs.
+
+This release covers CW, CPD, MW and KK — four campus buildings, with sample rooms and sample sockets — and serves two roles from one application: students who report, and the estates office that repairs. Every screen works the same on a phone as on a laptop, because the person reporting a fault is standing at a desk with one hand free.
+
+## Why a socket, not a room
+
+Booking systems count rooms and desks. Repair systems count faults. Neither of them can tell you whether the thing you actually need — a live socket — is working at the seat you are about to take. So a student arrives at a room that is booked, free and correct in every system, and finds a socket that has been dead for a month.
+
+Sure Socket records the one object both sides care about, and it records it at the resolution people experience it: one socket, on one desk, in one room. That is also what makes the data cheap to keep honest — a claim about a single socket is small enough for a passer-by to check in two seconds.
 
 ### The socket number
 
-Every socket carries a number, and the number is the unit the whole product turns on: a student reads it off the desk, staff read the same string in the repair queue, and the database refuses two sockets with the same one.
+Every socket carries a number, printed on a sticker on the desk. A student reads it off the furniture, the room list repeats it, staff see the same string in the repair queue, and the database refuses two sockets with the same one.
 
 ```
-CPD-LG01-0001        MW-T1-5445
-building  room  sequence
+  CPD        -  LG01       -  0001
+  building      room          sequence within the room
 ```
 
-- The building code and the room code are HKU's own. `CPD` and `LG01` are already on signage and in timetables, so nobody has to learn a second name for a place they already know.
-- The room code does not repeat the building, and the sequence is per room: `0001` upward, four digits.
-- A number is assigned once. Renaming a room or adding a seat does not renumber the sockets that already exist, because a sticker on a desk outlives a spreadsheet.
+- The building code and the room code are HKU's own. `CPD`, `MW` and `LG01` are already on signage and in timetables, so nobody has to learn a second name for a place they already know.
+- The room code does not repeat the building, and the sequence is per room — four digits, starting at `0001`.
+- A number is assigned once and never reused. Renaming a room or adding a seat does not renumber the sockets that already exist, because a sticker on a desk outlives a spreadsheet.
+- Uniqueness is enforced by an index on `socket.code`, not by good intentions. A duplicate number is a database error, not a display bug.
 
-## How the loop keeps itself alive
+## The loop
 
-There are no sensors here and no one maintaining a database by hand. Everything the app knows comes from one loop, and the loop only turns because every step gives the next person a reason to take it.
+There are no sensors in this build and nobody maintaining the database by hand. Everything the app knows comes from one loop, and the loop turns because every step gives the next person a reason to take it.
 
 1. A student opens a room and sees each socket with the date it was last checked.
-2. If it is dead, they report it in one tap. Nothing else is asked of them.
-3. A second student reports the same thing within 24 hours, and the state changes. One voice is not enough, so nobody can mark a floor alone.
-4. The queue is sorted by how long a socket has been dead, so staff repair the worst ones first and then mark them done.
+2. If it is dead, they report it in one tap. Nothing else is asked of them — no photo, no comment, no account to create.
+3. A second student reports the same thing within 24 hours, and the state changes. One voice is not enough, so nobody can mark a floor alone on a bad afternoon.
+4. The queue is ordered by how long a socket has been broken, so staff start with the worst one and mark it repaired when they are done.
 5. The next student sees "repaired" with the date, and either trusts it or checks again. That check is the next report, and the loop starts over.
 
-![The loop](docs/diagrams/loop-en.png)
+A socket is described with five words, and nothing else:
 
-Two details keep it turning. Every entry carries a date, so an old check looks old and a stale socket is never sold as a working one. And the 30 day mark turns "I am not sure about this one" into an action, which costs one tap.
+- **works** — someone checked it and it charged a laptop.
+- **loose** — it charges, but the plug falls out.
+- **no power** — dead.
+- **repaired** — staff closed a fault and stamped the time.
+- **not checked** — nobody has looked yet, which is said out loud rather than guessed at.
+
+![The loop: a student checks, reports, a second student confirms, staff repair, the next student sees the repair](docs/diagrams/loop-en.png)
 
 ## Screens
 
-| A room: the plan and the list | Report a fault | Repair queue |
+One build, two roles. A student sees *Find a socket* and *Report a fault*; the estates office sees the *Repair queue* instead of the report form. Being signed in as the wrong role does not hide a button — the API refuses the request.
+
+| Room, plan and list | Report a fault | Repair queue |
 |---|---|---|
-| ![Room](docs/screens/02-room.png) | ![Report](docs/screens/03-report.png) | ![Queue](docs/screens/04-queue.png) |
+| ![A room: the plan with sockets coloured by state, the filter, and the socket list](docs/screens/desktop/02-room-and-plan.jpg) | ![Report a fault in four steps: building, room, socket, then what is wrong](docs/screens/desktop/03-report-a-fault.jpg) | ![The repair queue, oldest fault first, with how many students back each report](docs/screens/desktop/04-repair-queue.jpg) |
 
-## Technical notes
+On a phone the same screens reflow into one column — the plan first, because that is what you tap when you are standing at the desk:
 
-The design behind this build, written out: [English](docs/technical.md) · [简体中文](docs/technical.zh-CN.md) · [繁體中文](docs/technical.zh-TW.md).
+| Room on a phone | Report on a phone |
+|---|---|
+| ![A room on a phone: plan, filter, list](docs/screens/mobile/05-phone-room.jpg) | ![Reporting a fault on a phone](docs/screens/mobile/06-phone-report.jpg) |
 
-## Stack
+## How the record stays honest
 
-Built with:
+Crowd-sourced data is worth exactly as much as its resistance to being wrong, so the rules are few, visible and enforced where they cannot be argued with.
 
-- **Backend**: Spring Boot 4.1, Java 21, Spring Data JPA, Flyway, PostgreSQL 17
-- **Frontend**: Vue 3 + Vite + Element Plus, one application for both roles
-- **Auth**: email + password (BCrypt), token in memory, role checked on every write
+- **Two different accounts flip a socket.** Same state, within 24 hours. A single report is stored and shown as unconfirmed, with the count of how many more are needed.
+- **One report per account per socket per day, ten per account per day.** The first rule stops one person changing a socket alone; the second stops one person sweeping a whole floor in an hour. Both answer HTTP 429 when they bite.
+- **Old checks are labelled old.** Past 30 days a check is flagged in the interface until somebody looks again, and nothing is silently presented as fresh.
+- **Only maintenance can close a fault.** A repair sets the state to repaired and stamps the time; that stamp is what the next student reads.
+- **Every row carries a timestamp**, so "2 days ago" and "never" are facts the app can stand behind rather than a vague assurance.
+- **The rules live server-side.** The UI cannot grant itself a second report, a role, or a state change; it only renders what the API returns.
 
-## Run it
+What that leaves as known limits, said plainly: tokens live in memory, so restarting the API signs everyone out; the login endpoint has no rate limit yet; and the seed data is a sample, not a survey.
 
-### Docker, everything in one command
+## Architecture
+
+Three processes and one database, all of them ordinary, because the interesting part of this product is the record and not the plumbing.
+
+- **Backend** — Spring Boot 4.1 on Java 21, Spring Data JPA, Flyway migrations V1–V7, PostgreSQL 17. The rules are pure functions in `Rules.java`, kept out of the services so they can be tested without a database.
+- **Frontend** — Vue 3 with Vite and Element Plus, one build serving both roles; the room plan is a small SVG component, not a screenshot of a floor.
+- **Serving** — the production image puts the Vue build behind nginx, which serves the app and proxies `/api` to the backend, so the browser sees one origin and CORS never comes into it.
+- **Auth** — email and password, BCrypt hashes, a token held in memory, and the role checked on every write in the controller rather than in the view.
+- **Data path** — a report appends a row and then counts distinct accounts for that socket in the window; the socket row itself only moves when the count is satisfied. History is never overwritten.
+
+## What is in the box
+
+- `backend/` — the Spring Boot API: controllers, services, pure rules, Flyway migrations, seed data, tests.
+- `frontend/` — the Vue 3 application, one build serving both roles.
+- `scripts/` — setup-db, start, stop, the test runner, and an end-to-end walkthrough.
+- `docs/` — screenshots, the loop diagram, technical notes and deployment notes.
+
+Also included: three demo accounts so the two-report rule can actually be demonstrated, a demo reset script that puts the sample data back, and an end-to-end script that drives the loop through the API from report to repair.
+
+## Running it locally
+
+Docker is the shortest path — Postgres, the API and the web app start together, with the schema migrated and the demo accounts seeded:
 
 ```bash
-docker compose up --build
-open http://localhost:8080
+docker compose up --build          # Postgres 17 + Spring Boot API + Vue build behind nginx
+open http://localhost:8080         # sign in with one of the accounts below
 ```
 
-Postgres, the API and the web app come up together. The database lives in a named volume, so `docker compose down -v` is what gets you a clean one; `docker compose up -d db` starts only the database.
+The compose file is three services, and everything adjustable is an environment variable:
 
-### Without Docker
-
-Java 21, Maven, Node 18+ and PostgreSQL 17 are enough:
-
-```bash
-./scripts/start-all.sh      # database first, then backend :8081 and frontend :5175
-open http://localhost:5175
+```yaml
+services:
+  db:
+    image: postgres:17-alpine
+    volumes: [socketfinder-data:/var/lib/postgresql/data]
+  backend:
+    build: ./backend
+    environment:
+      SF_DB_URL: jdbc:postgresql://db:5432/socketfinder
+  frontend:
+    build: ./frontend
+    ports: ["${SF_WEB_PORT:-8080}:80"]
 ```
 
-`scripts/setup-db.sh` decides where the database lives: an existing server if you set `SF_DB_URL`, Docker if it is available, otherwise its own cluster inside `db/pgdata` on the first free port. Running it twice is harmless.
+The database lives in a named volume, so `docker compose down -v` is what gets you a clean one, and `docker compose up -d db` starts only the database. Without Docker you need Java 21, Maven, Node 18+ and PostgreSQL 17; `./scripts/start-all.sh` brings up the database first, then the API on :8081 and the frontend on :5175, and `./scripts/stop-all.sh` stops them. `scripts/setup-db.sh` decides where the database lives — an existing server if you set `SF_DB_URL`, Docker if it is available, otherwise its own cluster under `db/pgdata` on the first free port — and running it twice is harmless.
 
-Ports and credentials are environment variables with working defaults: `SF_DB_URL`, `SF_DB_USER`, `SF_DB_PASSWORD`, `SF_BIND`, `SF_PORT`, `SF_WEB_PORT`.
-
-Stop everything with `./scripts/stop-all.sh`.
-## Deployment
-
-What the environment variables do, how to back the database up, and what to check when a container does not come up: [English](docs/deployment.md) · [简体中文](docs/deployment.zh-CN.md) · [繁體中文](docs/deployment.zh-TW.md).
-
-## Demo accounts (password `demo1234`)
+Password for all three accounts is `demo1234`:
 
 | Email | Role | Why it exists |
 |---|---|---|
 | student1@connect.hku.hk | student | first reporter |
-| student2@connect.hku.hk | student | second reporter, needed to flip a socket |
+| student2@connect.hku.hk | student | second reporter — the one that flips a socket |
 | estates@hku.hk | maintenance | sees the repair queue |
 
-Two different accounts have to report the same thing before a state changes, so you need both students
-to see a flip.
+Ports and credentials are environment variables with working defaults: `SF_DB_URL`, `SF_DB_USER`, `SF_DB_PASSWORD`, `SF_BIND`, `SF_PORT`, `SF_WEB_PORT`, `SF_REPORTS_NEEDED`, `SF_REPORTS_PER_DAY`.
 
-## API
+## Documentation
 
-| Method | Path | Who | What |
-|---|---|---|---|
-| POST | `/api/auth/login` | anyone | email + password, returns a token |
-| GET | `/api/auth/demo-accounts` | anyone | the three demo logins, for the sign-in page |
-| GET | `/api/buildings` | anyone | buildings with their floors |
-| GET | `/api/buildings/{id}/rooms` | anyone | every room in a building, for the room picker |
-| GET | `/api/floors/{id}/rooms` | anyone | rooms on a floor with socket counts |
-| GET | `/api/rooms/{id}` | anyone | seats and sockets in a room |
-| POST | `/api/sockets/{id}/report` | student | report `WORKING`, `LOOSE` or `NO_POWER` |
-| POST | `/api/sockets/{id}/repair` | maintenance | mark repaired, with an optional note |
-| GET | `/api/maintenance/queue` | maintenance | sockets reported broken, oldest first |
+| Document | What is in it |
+|---|---|
+| [Technical notes](docs/technical.md) | data model, rules, request flow, endpoints, and where the design goes next |
+| [Technical notes, 简体中文](docs/technical.zh-CN.md) | the same, in Simplified Chinese |
+| [Technical notes, 繁體中文](docs/technical.zh-TW.md) | the same, in Traditional Chinese |
+| [Deployment](docs/deployment.md) | environment variables, backup and reset, health checks, the failures worth knowing |
+| [Deployment, 简体中文](docs/deployment.zh-CN.md) | the same, in Simplified Chinese |
+| [Deployment, 繁體中文](docs/deployment.zh-TW.md) | the same, in Traditional Chinese |
 
-## Rules this version implements
+This README exists in three languages. Any change to one is made in all three in the same commit, and `scripts/check-readmes.sh` fails the build when the three drift apart in structure.
 
-- **Two reports flip a socket.** Two different accounts, same state, within 24 hours. One report on its
-  own is stored and shown as unconfirmed.
-- **One report per account per socket per day, ten per account per day.** The per-socket rule stops
-  one person flipping a socket alone; the daily ceiling stops one person sweeping a whole floor. Both
-  return HTTP 429 when exceeded.
-- **Old checks are labelled old.** Anything past 30 days is flagged in the interface instead of being
-  trusted as fresh.
-- **Only maintenance can close a repair.** A repair sets the state to `REPAIRED` and stamps the time,
-  which is what students see next.
-- **Role separation is enforced by the API**, not by hiding buttons in the front end.
+## Roadmap
 
-## Planned next
-
-- A real floor plan under the schematic: the room outline from the building's own drawing, and seats placed by their coordinates instead of the tidy grid used here.
-- Photos on reports, a notification when a socket you use changes state, and an offline view for the basement.
+- A real floor plan under the schematic: the room outline taken from the building's own drawing, with seats placed by coordinates instead of the tidy grid used here.
+- Photos on reports, a notification when a socket you rely on changes state, and a usable view for the basement where the signal is poor.
 - Room and socket data for the whole campus, imported one building at a time.
-- Email verification and self-registration for students.
-- A phone build, once the web app is used enough to justify it.
+- Self-registration with email verification, so the two-report rule works with real accounts instead of three seeded ones.
+- Rate limiting on login, and tokens that survive a restart.
+- A native phone build once the web app has been used enough to justify one.
 
-The scope of each step is set at the review after the previous iteration.
-
-## Known prototype limits
-
-- Tokens live in memory, so restarting the backend signs everyone out.
-- Passwords are BCrypt, but the login endpoint has no rate limit.
-- The seed data is a sample, not a survey of a real floor.
-
-## Repository layout
-
-```
-backend/   Spring Boot API, Flyway migrations, seed data, unit tests
-frontend/  Vue 3 application (one build, two roles)
-scripts/   start / stop / test / end-to-end
-docs/      screenshots
-```
+The scope of each step is set at the review after the previous release, and each release is expected to leave the loop working end to end.
 
 ---
 
-**Keeping the READMEs in sync.** This project has three READMEs: English, Simplified Chinese and
-Traditional Chinese. Any change to one must be made in all three in the same commit. `scripts/check-readmes.sh`
-verifies that the three still have the same structure, and it runs before every push.
+Sure Socket is built at HKU as a CCST9003 group project (Group R21). The course ends; the socket on your desk is still the unit.

@@ -91,6 +91,37 @@ def _char_map(elements):
     return "".join(chars), index_of
 
 
+def cmd_append(docs, doc_id, table_i, row_i, col_i, path):
+    """Append paragraphs to the end of a cell, keeping the cell's existing paragraph style."""
+    text = open(path, encoding="utf-8").read().rstrip("\n")
+    doc = fetch(docs, doc_id)
+    cell = tables(doc)[table_i]["tableRows"][row_i]["tableCells"][col_i]
+    at = cell["content"][-1]["endIndex"] - 1
+    body = {"requests": [{"insertText": {"location": {"index": at}, "text": "\n" + text}}]}
+    docs.documents().batchUpdate(documentId=doc_id, body=body).execute()
+    print("appended %d chars at %d" % (len(text), at))
+
+
+def cmd_bold(docs, doc_id, table_i, row_i, col_i, needle):
+    """Make one string inside a cell bold at 10pt, without touching anything else."""
+    doc = fetch(docs, doc_id)
+    cell = tables(doc)[table_i]["tableRows"][row_i]["tableCells"][col_i]
+    text, index_of = _char_map(cell["content"])
+    pos = text.find(needle)
+    if pos < 0:
+        sys.exit("not found: %r" % needle)
+    start = index_of[pos]
+    end = index_of[pos + len(needle) - 1] + 1
+    body = {"requests": [{"updateTextStyle": {
+        "range": {"startIndex": start, "endIndex": end},
+        "textStyle": {"bold": True,
+                      "weightedFontFamily": {"fontFamily": "Times New Roman"},
+                      "fontSize": {"magnitude": 10, "unit": "PT"}},
+        "fields": "bold,weightedFontFamily,fontSize"}}]}
+    docs.documents().batchUpdate(documentId=doc_id, body=body).execute()
+    print("bolded %r (%d-%d)" % (needle, start, end))
+
+
 def cmd_replace_body(docs, doc_id, old, new):
     """Same swap, but anywhere in the body paragraphs instead of one table cell."""
     doc = fetch(docs, doc_id)
@@ -152,6 +183,10 @@ def main():
         print(cell_text(tables(doc)[int(sys.argv[3])]["tableRows"][int(sys.argv[4])]
                         ["tableCells"][int(sys.argv[5])]))
         print("range %d-%d" % (s, e))
+    elif cmd == "append-cell":
+        cmd_append(docs, doc_id, int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6])
+    elif cmd == "bold":
+        cmd_bold(docs, doc_id, int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6])
     elif cmd == "replace-body":
         cmd_replace_body(docs, doc_id, sys.argv[3], sys.argv[4])
     elif cmd == "replace":
