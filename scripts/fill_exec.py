@@ -3,14 +3,15 @@
 
   python3 scripts/fill_exec.py
 
-Reads 交件/R21_Plan.docx, writes 交件/R21_init_Plan_exec.docx. Only the two technical
-sections, the presentation order and the video plan are written; the problem and the
-business sections stay as their owners left them.
+The technical half is split by kind rather than by screen:
 
-The technical part is two halves and nothing else: B_1 is the mechanism, with the
-shape of the system as its first point rather than a section of its own; B_2 is what
-the two sides actually see. Formatting copies the table: bold "Chairperson"/"Details"
-at 12pt, numbered headings and bullets at 10pt, Times New Roman.
+  B_1  the logic   — the model, the numbering, the state rules, the report rule, and
+                     where those decisions are enforced (architecture included here)
+  B_2  the function— what a student does, what staff do, the walkthrough we test, and
+                     where the function deliberately stops
+
+The sentences are the same ones as before; only the grouping and the headings changed.
+The problem and business cells are left exactly as their owners left them.
 """
 import os
 import shutil
@@ -79,14 +80,16 @@ def fill_title(cell):
 
 
 def fill_b1(cell):
-    """The mechanism. Architecture is point one, not a heading of its own."""
+    """The logic: model, numbering, state rules, the report rule, who may change what."""
     clear(cell)
     label(cell, "Chairperson", "Haoran Liu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
+    body(cell, "This half is the logic: what the record is made of, what decides a state, "
+               "and where those decisions are enforced.")
 
-    heading(cell, "1. The shape of it, and why the shape matters")
+    heading(cell, "1. The shape of it")
     bullet(cell, "Three parts, one place for rules.",
            "A Vue frontend in the browser calls /api; a Spring Boot service answers; "
            "PostgreSQL holds the record. Every read and every write goes through the "
@@ -131,16 +134,26 @@ def fill_b1(cell):
            "account; reports that did not hold up lower it. A higher score makes one report "
            "worth more, which is the only reason to keep reporting accurately.")
 
+    heading(cell, "5. Two roles, decided by the service")
+    bullet(cell, "Two roles, checked on the server.",
+           "Students report and read; staff close. The check is in the service, not in the "
+           "interface, and an account is a role, not a person.")
+    bullet(cell, "No identity in any view.",
+           "A report shows a count of distinct accounts and a timestamp. No name, no device, "
+           "no history of one student's movements.")
+
 
 def fill_b2(cell):
-    """What the two sides see. No architecture here: that was point one of B_1."""
+    """The function: what a student does, what staff do, what we test, where we stop."""
     clear(cell)
     label(cell, "Chairperson", "Haoran Liu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
+    body(cell, "This half is the function: what a student and a member of staff actually do, "
+               "in order, and where that stops.")
 
-    heading(cell, "1. The student side")
+    heading(cell, "1. The student side, step by step")
     bullet(cell, "Three levels down.",
            "Building, then room, then the socket list and the room plan side by side: the "
            "list gives number, seat, state, the time the state changed and the time of the "
@@ -149,7 +162,7 @@ def fill_b2(cell):
            "Building, room, socket number, what is wrong. From an already open room it is "
            "three taps, and the socket turns orange or red on the spot.")
 
-    heading(cell, "2. The staff side")
+    heading(cell, "2. The staff side, step by step")
     bullet(cell, "One queue, in order of neglect.",
            "Sorted by how long a socket has been broken, each row showing how many distinct "
            "accounts reported it, so a single frustrated report does not outrank a fault "
@@ -158,19 +171,13 @@ def fill_b2(cell):
            "Marking a repair sets the socket to repaired, stamps the time, and the room page "
            "shows the new state at once, which is what closes the loop.")
 
-    heading(cell, "3. Who may change what")
-    bullet(cell, "Two roles, checked on the server.",
-           "Students report and read; staff close. The check is in the service, not in the "
-           "interface, and an account is a role, not a person.")
-    bullet(cell, "No identity in any view.",
-           "A report shows a count of distinct accounts and a timestamp. No name, no device, "
-           "no history of one student's movements.")
-
-    heading(cell, "4. What was tested, and what is not there")
+    heading(cell, "3. The walkthrough we test")
     bullet(cell, "The loop, end to end.",
            "Two accounts reporting the same socket, the socket entering the queue, a repair "
            "closing it, and the room page showing the new state. Unit tests cover the state "
            "rules; the demonstration is the running system, not slides.")
+
+    heading(cell, "4. Where the function stops")
     bullet(cell, "Deliberately missing.",
            "No photo evidence and no push notification: the queue is a page staff open, not "
            "a message they receive. Both are written down as the next iteration rather than "
