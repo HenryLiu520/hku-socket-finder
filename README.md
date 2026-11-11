@@ -41,7 +41,7 @@ There are no sensors in this build and nobody maintaining the database by hand. 
 1. A student opens a room and sees each socket with the date it was last checked.
 2. If it is dead, they report it in one tap. Nothing else is asked of them — no photo, no comment, no account to create.
 3. A second student reports the same thing within 24 hours, and the state changes. One voice is not enough, so nobody can mark a floor alone on a bad afternoon.
-4. The queue is ordered by how long a socket has been broken, so staff start with the worst one and mark it repaired when they are done.
+4. The queue is ordered by the oldest check first — usually the socket that has been broken longest — so staff start with the worst one and mark it repaired when they are done.
 5. The next student sees "repaired" with the date, and either trusts it or checks again. That check is the next report, and the loop starts over.
 
 A socket is described with five words, and nothing else:
