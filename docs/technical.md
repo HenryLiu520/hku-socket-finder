@@ -2,6 +2,9 @@
 
 How this repository is put together, and why the rules are the rules.
 
+
+**On this page:** [1. What this build is](#1-what-this-build-is) · [2. Layers](#2-layers) · [3. Data model](#3-data-model) · [4. Rules](#4-rules) · [5. What happens when someone reports](#5-what-happens-when-someone-reports) · [6. Endpoints](#6-endpoints) · [7. States](#7-states) · [8. Limits of this build](#8-limits-of-this-build) · [9. Where this goes next](#9-where-this-goes-next)
+
 ## 1. What this build is
 
 Iteration 1 of Sure Socket: one socket, end to end. A student opens a room, reports a dead socket,

@@ -18,6 +18,8 @@
             <router-link to="/" class="navlink">{{ t('nav.find') }}</router-link>
             <router-link to="/report" class="navlink">{{ t('nav.report') }}</router-link>
             <router-link v-if="auth.isMaintenance" to="/maintenance" class="navlink">{{ t('nav.queue') }}</router-link>
+            <!-- the handset build: same API, app-shaped shell -->
+            <router-link to="/m" class="navlink navlink-phone">{{ t('nav.phone') }}</router-link>
           </nav>
 
           <div class="tail">
@@ -125,6 +127,15 @@ function signOut() {
   padding: 8px 11px; border-radius: 8px; white-space: nowrap; transition: .14s;
 }
 .navlink:hover { color: var(--sf-ink); background: rgba(2, 70, 56, .055); }
+
+/* The handset build is a route, not a tab: give it a quieter, gold-edged look. */
+.navlink-phone {
+  color: var(--sf-gold);
+  border: 1px solid rgba(180, 151, 100, .42);
+  border-radius: 999px;
+  padding: 3px 11px;
+}
+.navlink-phone:hover { color: var(--sf-gold); background: rgba(180, 151, 100, .12); }
 .navlink.router-link-active {
   color: var(--sf-green); font-weight: 650; background: var(--sf-green-soft);
 }

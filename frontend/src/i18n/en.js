@@ -6,6 +6,7 @@ export default {
     subtitle: 'CCST9003 · Group R21 · Chi Wah L1'
   },
   nav: {
+    phone: 'Phone',
     find: 'Find a socket',
     report: 'Report a fault',
     queue: 'Repair queue',

@@ -5,6 +5,7 @@ export default {
     subtitle: 'CCST9003 · R21 組 · 智華 L1'
   },
   nav: {
+    phone: '手機版',
     find: '找插座',
     report: '上報故障',
     queue: '維修佇列',
