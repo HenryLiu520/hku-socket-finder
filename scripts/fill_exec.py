@@ -365,14 +365,13 @@ def main():
 
     d = docx.Document(DST)
     t = d.tables[2]
-    cells = {r: t.rows[r].cells[0] for r in (2, 6, 8, 15, 17, 19)}
+    cells = {r: t.rows[r].cells[0] for r in (2, 6, 8, 15, 19)}
 
     relabel_layers(d)
     fill_title(cells[2])
     fill_b1(cells[6])
     fill_b2(cells[8])
     fill_sequence(cells[15])
-    fill_video(cells[17])
     fill_what_else(cells[19])
     # r4 (Problem) and r10 (Business) belong to their owners: left untouched.
     d.save(DST)
