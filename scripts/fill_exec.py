@@ -140,7 +140,7 @@ def fill_b1(cell):
 def fill_b2(cell):
     """The function: the two sides, the loop, and how the frontend is built."""
     clear(cell)
-    label(cell, "Chairperson", "Haoran Liu")
+    label(cell, "Chairperson", "Chenxi Yu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
@@ -200,7 +200,14 @@ def fill_b2(cell):
            "fixed and the content column is allowed to shrink, so a narrow laptop window "
            "scrolls the table instead of the page.")
 
-    heading(cell, "5. Scope boundary")
+    heading(cell, "5. Why this layer is the innovation")
+    bullet(cell, "The record is drawn where the decision is made.",
+           "A student sees the number he will quote, the colour of the socket in front of him "
+           "and the date of the last check on one screen, and files a report in four choices "
+           "instead of a sentence. That is the difference between a map people consult and a "
+           "map people maintain: the interface and the record are the same object.")
+
+    heading(cell, "6. Scope boundary")
     bullet(cell, "Explicitly out of scope.",
            "No photo evidence and no push notification: the queue is a page staff open, not "
            "a message they receive. Both are written down as the next iteration rather than "
@@ -263,7 +270,12 @@ def relabel_layers(d):
         "Technical aspect (2;  for a team with 5 members only)":
             "Technical aspect (2; for a team with 5 members only) — function layer",
     }
+    chairs = {
+        "Technical aspect (1)": "Chairperson : Haoran Liu",
+        "Technical aspect (2;": "Chairperson : Chenxi Yu",
+    }
     changed = []
+    block = None
     for par in cell.paragraphs:
         s = par.text.strip()
         for old, new in names.items():
@@ -271,6 +283,15 @@ def relabel_layers(d):
                 if par.runs:
                     par.runs[0].text = new + s[len(old):]
                 changed.append(new)
+        for key in chairs:
+            if s.startswith(key):
+                block = key
+        if s.startswith("Chairperson") and block in chairs:
+            want = chairs[block]
+            if s != want and par.runs:
+                par.runs[0].text = want
+                changed.append(want)
+            block = None
     return changed
 
 
