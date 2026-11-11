@@ -111,38 +111,41 @@ def plate(img, box, name):
 def card_intro():
     img = backdrop()
     d = ImageDraw.Draw(img)
-    kicker(d, "CCST9003  ·  GROUP R21", H * 0.255)
+    kicker(d, "CCST9003  ·  Group R21", H * 0.255)
 
     f = font(BLACK, 300)
-    spaced(d, W / 2, H * 0.36, "SURE SOCKET", f, CREAM, 10)
+    spaced(d, W / 2, H * 0.36, "Sure Socket", f, CREAM, 10)
 
     d.rectangle([W / 2 - 150, H * 0.585, W / 2 + 150, H * 0.591], fill=GOLD)
 
     f2 = font(BOLD, 96)
-    spaced(d, W / 2, H * 0.625, "KNOW BEFORE YOU SIT", f2, CREAM, 14)
+    spaced(d, W / 2, H * 0.625, "Know before you sit", f2, CREAM, 10)
 
     f3 = font(BOLD, 54)
-    spaced(d, W / 2, H * 0.755, "A SOCKET-LEVEL STATUS MAP FOR HKU", f3, (196, 214, 206), 8)
+    spaced(d, W / 2, H * 0.755, "A socket-level status map for HKU", f3, (196, 214, 206), 6)
     return img
 
 
 def card_members():
+    """Five names, one per line, centred: a list, not a row of plates."""
     img = backdrop()
     d = ImageDraw.Draw(img)
-    kicker(d, "CCST9003  ·  GROUP 21", H * 0.13)
+    kicker(d, "CCST9003  ·  Group R21", H * 0.115)
 
-    f = font(BLACK, 250)
-    spaced(d, W / 2, H * 0.185, "GROUP 21", f, CREAM, 12)
+    f = font(BLACK, 210)
+    spaced(d, W / 2, H * 0.165, "Group 21", f, CREAM, 10)
 
-    f2 = font(BOLD, 64)
-    spaced(d, W / 2, H * 0.365, "MEMBERS", f2, GOLD, 24)
+    f2 = font(BOLD, 56)
+    spaced(d, W / 2, H * 0.325, "Members", f2, GOLD, 18)
 
-    n, pw, gap = len(MEMBERS), 540, 66
-    total = n * pw + (n - 1) * gap
-    x = (W - total) / 2
-    for name in MEMBERS:
-        plate(img, (x, H * 0.455, x + pw, H * 0.855), name)
-        x += pw + gap
+    f3 = font(BOLD, 118)
+    top, step = H * 0.40, H * 0.105
+    for i, name in enumerate(MEMBERS):
+        d.text((W / 2 - d.textlength(name, font=f3) / 2, top + i * step),
+               name, font=f3, fill=CREAM)
+    # a gold rule under the list, closing it
+    d.rectangle([W / 2 - 220, top + len(MEMBERS) * step + 30,
+                 W / 2 + 220, top + len(MEMBERS) * step + 36], fill=GOLD)
     return img
 
 
@@ -160,11 +163,11 @@ def card_project():
     d.rounded_rectangle([cx + 38, cy + 28, cx + 132, cy + 86], radius=14, fill=GREEN)
 
     f = font(BLACK, 250)
-    spaced(d, W / 2, H * 0.545, "SURE SOCKET", f, CREAM, 8)
+    spaced(d, W / 2, H * 0.545, "Sure Socket", f, CREAM, 8)
 
     d.rectangle([W / 2 - 130, H * 0.715, W / 2 + 130, H * 0.7205], fill=GOLD)
     f2 = font(BOLD, 80)
-    spaced(d, W / 2, H * 0.745, "KNOW BEFORE YOU SIT", f2, GOLD, 12)
+    spaced(d, W / 2, H * 0.745, "Know before you sit", f2, GOLD, 10)
     return img
 
 
@@ -202,7 +205,7 @@ def main():
     for p in (intro, members, project):
         print("wrote", p)
 
-    clip([(intro, 3.2)], os.path.join(out, "R21_intro.mp4"))
+    clip([(intro, 3.0)], os.path.join(out, "R21_intro.mp4"))
     clip([(members, 4.0), (project, 3.0)], os.path.join(out, "R21_outro.mp4"), fade=0)
     print("wrote", os.path.join(out, "R21_intro.mp4"))
     print("wrote", os.path.join(out, "R21_outro.mp4"))
