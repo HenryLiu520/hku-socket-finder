@@ -80,14 +80,14 @@ def fill_title(cell):
 
 
 def fill_b1(cell):
-    """The logic: model, numbering, state rules, the report rule, who may change what."""
+    """The logic: model, numbering, state rules, and the scoring that weights a report."""
     clear(cell)
     label(cell, "Chairperson", "Haoran Liu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
     body(cell, "Logic layer: the data model, the numbering, the rules that determine a socket's "
-               "state, and where those rules are enforced.")
+               "state, and the scoring that decides what one report is worth.")
 
     heading(cell, "1. System architecture and rule enforcement")
     bullet(cell, "Three-tier separation, rules held server-side.",
@@ -140,27 +140,17 @@ def fill_b1(cell):
            "weight with volume, because the daily cap limits volume and only settled reports "
            "move the score.")
 
-    heading(cell, "6. The incentive mechanism")
-    bullet(cell, "Rewards follow confirmed reports, not reports.",
-           "A badge at the first ten confirmed reports, and a campus voucher at the end of "
-           "term for the accounts that kept a floor accurate. Reporting more earns nothing "
-           "extra; being right does.")
-    bullet(cell, "Why this keeps the loop turning.",
-           "The score and the reward read the same number, so the only way to gain either is "
-           "to be right about a socket that somebody later closed. That is what makes a "
-           "stranger's report worth trusting, and what makes it worth his ten seconds: the "
-           "loop is held up by these two mechanisms, not by goodwill.")
-
 
 def fill_b2(cell):
-    """The function: the two sides, the loop, and how the frontend is built."""
+    """The function, plus the second mechanism: what people do, and what rewards them."""
     clear(cell)
     label(cell, "Chairperson", "Chenxi Yu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
     body(cell, "Function layer: the steps a student and a facilities member perform, the loop "
-               "that connects them, and how the frontend implements both.")
+               "that connects them, the incentive that keeps people reporting, and how the "
+               "frontend implements all of it.")
 
     heading(cell, "1. Student-facing navigation and reporting")
     bullet(cell, "Three-level navigation, list and plan together.",
@@ -192,7 +182,18 @@ def fill_b2(cell):
            "and the next report is what keeps the record usable. The queue is the pump: "
            "without a closure, the loop stalls at step three.")
 
-    heading(cell, "4. Frontend implementation")
+    heading(cell, "4. The incentive mechanism")
+    bullet(cell, "Rewards follow confirmed reports, not reports.",
+           "A badge at the first ten confirmed reports, and a campus voucher at the end of "
+           "term for the accounts that kept a floor accurate. Reporting more earns nothing "
+           "extra; being right does.")
+    bullet(cell, "Why this keeps the loop turning.",
+           "The score and the reward read the same number, so the only way to gain either is "
+           "to be right about a socket that somebody later closed. That is what makes a "
+           "stranger's report worth trusting, and what makes it worth his ten seconds: the "
+           "loop is held up by these two mechanisms, not by goodwill.")
+
+    heading(cell, "5. Frontend implementation")
     bullet(cell, "One application, three roles.",
            "A Vue 3 single-page application built with Vite, routed with vue-router: the "
            "building list, the room view, the report form, the maintenance queue and the "
@@ -210,19 +211,17 @@ def fill_b2(cell):
            "English, simplified and traditional Chinese ship as separate dictionaries with "
            "the same keys; the switch sits in the header and the choice persists, so a "
            "screen never mixes two languages.")
-    bullet(cell, "Layout rules.",
-           "The five states are CSS variables rather than hard-coded colours; the header is "
-           "fixed and the content column is allowed to shrink, so a narrow laptop window "
-           "scrolls the table instead of the page.")
-
-    heading(cell, "5. How the interface carries the two mechanisms")
     bullet(cell, "The weight is visible, not hidden.",
-           "An account shows its score and how many reports have been settled; a report shows "
-           "what it counted for once the socket is closed. A weight that nobody can see is "
+           "An account shows its score and how many reports have been settled, and a report "
+           "shows what it counted for once the socket is closed. A weight nobody can see is "
            "indistinguishable from a rule that does not exist.")
     bullet(cell, "The reward is a target, not a surprise.",
            "A small panel lists the badges and what earns them, so the incentive points at a "
            "number the student can watch move, which is the only way it can change behaviour.")
+    bullet(cell, "Layout rules.",
+           "The five states are CSS variables rather than hard-coded colours; the header is "
+           "fixed and the content column is allowed to shrink, so a narrow laptop window "
+           "scrolls the table instead of the page.")
 
     heading(cell, "6. Scope boundary")
     bullet(cell, "Explicitly out of scope.",
