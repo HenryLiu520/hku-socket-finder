@@ -80,15 +80,15 @@ def fill_title(cell):
 
 
 def fill_b1(cell):
-    """The logic: model, numbering, state rules, and the scoring that weights a report."""
+    """The logic: model, numbering, state rules, the loop, then how a report is scored."""
     clear(cell)
     label(cell, "Chairperson", "Haoran Liu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
     body(cell, "Logic layer: the data model, the numbering, the rules that determine a socket's "
-               "state, the scoring that decides what one report is worth, and the loop those "
-               "rules keep turning.")
+               "state, the loop those rules keep turning, and the scoring that decides what one "
+               "report is worth.")
 
     heading(cell, "1. System architecture and rule enforcement")
     bullet(cell, "Three-tier separation, rules held server-side.",
@@ -122,13 +122,25 @@ def fill_b1(cell):
            "socket was last checked. Loose is the common fault and the one a two-state map "
            "hides.")
 
-    heading(cell, "4. Report validation")
+    heading(cell, "4. The loop, end to end")
+    bullet(cell, "Four steps, one direction.",
+           "A student reports what he sees; the socket enters the staff queue once a second "
+           "account agrees; staff repair and close it; the state and its timestamp change, "
+           "and the next student reads the corrected record before choosing a seat. Nothing "
+           "in the loop is edited by hand on the side.")
+    bullet(cell, "Why it repeats.",
+           "Each closed repair is also evidence that the report behind it was right, which "
+           "is what the reputation score is built from; the score weights the next report, "
+           "and the next report is what keeps the record usable. The queue is the pump: "
+           "without a closure, the loop stalls at step three.")
+
+    heading(cell, "5. Report validation")
     bullet(cell, "Corroboration threshold and daily cap.",
            "A socket enters the maintenance queue only after two different accounts report "
            "it, and no account may file more than ten reports a day. One person cannot flip "
            "a room, and the cap bounds the noise.")
 
-    heading(cell, "5. Reputation scoring")
+    heading(cell, "6. Reputation scoring")
     bullet(cell, "The score is an error rate, not a count.",
            "A report is settled when the socket is closed or checked again: if the repair "
            "agrees with what was reported the report is confirmed; if it disagrees, or a "
@@ -140,18 +152,6 @@ def fill_b1(cell):
            "proportion to that score. Nobody is barred from reporting, and nobody can buy "
            "weight with volume, because the daily cap limits volume and only settled reports "
            "move the score.")
-
-    heading(cell, "6. The loop, end to end")
-    bullet(cell, "Four steps, one direction.",
-           "A student reports what he sees; the socket enters the staff queue once a second "
-           "account agrees; staff repair and close it; the state and its timestamp change, "
-           "and the next student reads the corrected record before choosing a seat. Nothing "
-           "in the loop is edited by hand on the side.")
-    bullet(cell, "Why it repeats.",
-           "Each closed repair is also evidence that the report behind it was right, which "
-           "is what the reputation score is built from; the score weights the next report, "
-           "and the next report is what keeps the record usable. The queue is the pump: "
-           "without a closure, the loop stalls at step three.")
 
 
 def fill_b2(cell):
