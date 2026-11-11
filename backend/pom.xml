@@ -15,7 +15,7 @@
   <artifactId>socket-finder</artifactId>
   <version>0.1.0</version>
   <name>socket-finder</name>
-  <description>Socket Finder - CCST9003 Group R21 (iteration 1)</description>
+  <description>Sure Socket - CCST9003 Group R21 (iteration 1)</description>
 
   <properties>
     <java.version>21</java.version>

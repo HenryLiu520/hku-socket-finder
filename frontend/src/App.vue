@@ -6,7 +6,7 @@
           <div class="brand" @click="$router.push('/')">
             <span class="mark"><i class="dot"></i></span>
             <div>
-              <div class="name">Socket Finder</div>
+              <div class="name">Sure Socket</div>
               <div class="sub">{{ t('app.subtitle') }}</div>
             </div>
           </div>

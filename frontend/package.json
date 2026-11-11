@@ -2,7 +2,7 @@
   "name": "socket-finder-frontend",
   "private": true,
   "version": "0.1.0",
-  "description": "Socket Finder - CCST9003 Group R21",
+  "description": "Sure Socket - CCST9003 Group R21",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -141,7 +141,7 @@ TEMPLATE = """<!doctype html>
 </style></head>
 <body>
 <header>
-  <div class="kicker">CCST9003 · Group R21 · Socket Finder</div>
+  <div class="kicker">CCST9003 · Group R21 · Sure Socket</div>
   <h1>Pitch video plan <span class="zh">影片方案</span></h1>
   <div class="sub">3:00 target · all English on screen · bilingual document for review</div>
 </header>
@@ -170,7 +170,7 @@ carries the first minute. <span class="zh">30 秒出镜是下限不是目标，�
 <table><thead><tr><th>English</th><th>中文</th></tr></thead>
 <tbody>{{SHOOT}}</tbody></table>
 
-<footer>Socket Finder · Group R21 · CCST9003 · plan for the 3-minute pitch video, due 29 Nov 23:59</footer>
+<footer>Sure Socket · Group R21 · CCST9003 · plan for the 3-minute pitch video, due 29 Nov 23:59</footer>
 </body></html>
 """
 

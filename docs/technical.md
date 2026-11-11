@@ -4,7 +4,7 @@ How this repository is put together, and why the rules are the rules.
 
 ## 1. What this build is
 
-Iteration 1 of Socket Finder: one socket, end to end. A student opens a room, reports a dead socket,
+Iteration 1 of Sure Socket: one socket, end to end. A student opens a room, reports a dead socket,
 and the state changes only when a second student agrees. Maintenance sees the result in a queue and
 closes it after a repair.
 

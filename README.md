@@ -1,4 +1,4 @@
-# Socket Finder
+# Sure Socket
 
 **Find a seat you can charge at.** A web app that tells a student, before they sit down, whether the power socket at that desk works.
 

@@ -54,7 +54,7 @@ def card(path, lines):
 
 
 def title_image(path):
-    card(path, [("Socket Finder", 330, font(BOLD, 78), INK),
+    card(path, [("Sure Socket", 330, font(BOLD, 78), INK),
                 ("Know before you sit down", 420, font(REG, 30), GOLD),
                 ("CCST9003  ·  Group R21  ·  HKU", 730, font(REG, 19), MUTED)])
 
@@ -62,7 +62,7 @@ def title_image(path):
 def end_image(path):
     card(path, [("One socket, one record.", 330, font(BOLD, 52), INK),
                 ("Students keep it true. Staff act on it.", 410, font(REG, 26), GOLD),
-                ("github.com/HenryLiu520/hku-socket-finder", 720, font(REG, 18), MUTED)])
+                ("github.com/HenryLiu520/sure-socket", 720, font(REG, 18), MUTED)])
 
 
 def caption_image(text, path):

@@ -21,8 +21,8 @@
 ## 一条命令部署
 
 ```bash
-git clone https://github.com/HenryLiu520/hku-socket-finder.git
-cd hku-socket-finder
+git clone https://github.com/HenryLiu520/sure-socket.git
+cd sure-socket
 docker compose up --build -d
 docker compose ps
 ```

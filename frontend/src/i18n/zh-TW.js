@@ -1,7 +1,7 @@
 /* 繁體中文 —— 獨立撰寫，用語與簡體版分開處理（房間／上報／狀態／維修／檢查）。 */
 export default {
   app: {
-    name: 'Socket Finder',
+    name: 'Sure Socket',
     subtitle: 'CCST9003 · R21 組 · 智華 L1'
   },
   nav: {

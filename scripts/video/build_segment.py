@@ -124,7 +124,7 @@ def loop_section(path):
 def main():
     os.makedirs(TMP, exist_ok=True)
     t_png, e_png = os.path.join(TMP, "t.png"), os.path.join(TMP, "e.png")
-    card_png(t_png, [("Socket Finder", 330, font(BOLD, 76), INK),
+    card_png(t_png, [("Sure Socket", 330, font(BOLD, 76), INK),
                      ("How it works, in one loop", 418, font(REG, 30), GOLD)])
     card_png(e_png, [("One socket, one record.", 336, font(BOLD, 50), INK),
                      ("Students keep it true. Staff close it.", 414, font(REG, 26), GOLD),

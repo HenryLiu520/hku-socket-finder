@@ -2,7 +2,7 @@
    with exactly the same shape; scripts/i18n-check.mjs enforces that. */
 export default {
   app: {
-    name: 'Socket Finder',
+    name: 'Sure Socket',
     subtitle: 'CCST9003 · Group R21 · Chi Wah L1'
   },
   nav: {

@@ -55,7 +55,7 @@ HTML = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <div class="wash"></div><div class="rule"></div>
 
 <header>
-  <div class="kicker">Socket Finder · Group R21</div>
+  <div class="kicker">Sure Socket · Group R21</div>
 </header>
 
 <main>

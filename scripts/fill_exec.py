@@ -69,7 +69,7 @@ def body(cell, text, size=10):
 
 def fill_title(cell):
     clear(cell)
-    run(cell.paragraphs[0], "Socket Finder: know before you sit", 14, True)
+    run(cell.paragraphs[0], "Sure Socket: know before you sit", 14, True)
     body(cell,
          "A web app that answers one question before you sit down: is there a working "
          "power socket at this seat? A student picks a building, a room and a socket "

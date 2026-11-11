@@ -1,7 +1,7 @@
 /* 简体中文 —— 独立撰写，不是从英文或繁体逐字转换来的。 */
 export default {
   app: {
-    name: 'Socket Finder',
+    name: 'Sure Socket',
     subtitle: 'CCST9003 · R21 组 · 智华 L1'
   },
   nav: {
