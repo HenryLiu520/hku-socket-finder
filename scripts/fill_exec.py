@@ -194,7 +194,35 @@ def fill_b2(cell):
            "stranger's report worth trusting, and what makes it worth his ten seconds: the "
            "loop is held up by these two mechanisms, not by goodwill.")
 
-    heading(cell, "4. Frontend implementation")
+    heading(cell, "4. Functional implementation")
+    bullet(cell, "Sign-in and roles.",
+           "Sign-in returns a token held in memory; the account row carries the role and the "
+           "service checks it on every write, so the staff queue and the student screens are "
+           "the same application behind one check.")
+    bullet(cell, "Browse without arithmetic.",
+           "The building list and the room list answer with the counts already summed "
+           "(sockets, working, broken), so the browser renders a room card without fetching "
+           "its sockets first.")
+    bullet(cell, "One room, one request.",
+           "The room endpoint returns every seat and socket with its state, the time the "
+           "state changed and the time of the last report in a single response, which is what "
+           "lets the list and the plan draw from the same numbers.")
+    bullet(cell, "A report that cannot be malformed.",
+           "The three dropdowns are filled from the server, so an impossible combination "
+           "cannot be selected in the first place; the endpoint re-checks the socket code and "
+           "refuses one that does not exist.")
+    bullet(cell, "Corroboration counted, not assumed.",
+           "A second report from the same account on the same socket is ignored; the second "
+           "distinct account is what changes the state and puts the socket in the queue.")
+    bullet(cell, "Closure in one transaction.",
+           "Closing a repair writes the repair row, sets the socket to repaired and stamps "
+           "both times together, so a half-closed socket cannot exist.")
+    bullet(cell, "A demo that starts from zero.",
+           "scripts/demo-reset.sql empties reports and repairs, returns every socket to not "
+           "checked and replays a fixed set of reports through a small function, so the "
+           "demonstration begins from the same state every time.")
+
+    heading(cell, "5. Frontend implementation")
     bullet(cell, "One application, three roles.",
            "A Vue 3 single-page application built with Vite, routed with vue-router: the "
            "building list, the room view, the report form, the maintenance queue and the "
@@ -224,7 +252,7 @@ def fill_b2(cell):
            "fixed and the content column is allowed to shrink, so a narrow laptop window "
            "scrolls the table instead of the page.")
 
-    heading(cell, "5. Scope boundary")
+    heading(cell, "6. Scope boundary")
     bullet(cell, "Explicitly out of scope.",
            "No photo evidence and no push notification: the queue is a page staff open, not "
            "a message they receive. Both are written down as the next iteration rather than "
