@@ -86,8 +86,8 @@ def fill_b1(cell):
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
-    body(cell, "Logic layer: the data model, the rules that determine a socket's state, and where "
-               "those rules are enforced.")
+    body(cell, "Logic layer: the data model, the numbering, the rules that determine a socket's "
+               "state, and where those rules are enforced.")
 
     heading(cell, "1. System architecture and rule enforcement")
     bullet(cell, "Three-tier separation, rules held server-side.",
@@ -115,14 +115,11 @@ def fill_b1(cell):
            "'CW-4-0002 is loose' and staff can close that exact socket, so the record "
            "becomes checkable instead of anecdotal.")
 
-    heading(cell, "3. State model and record freshness")
+    heading(cell, "3. State model")
     bullet(cell, "Three states, each timestamped.",
-           "Every state carries the time it last changed, and every socket carries the "
-           "date it was last checked. Loose is the common fault and the one a two-state "
-           "map hides.")
-    bullet(cell, "Missing data is treated as unknown.",
-           "A socket nobody has checked for weeks is shown as not checked, not as working, "
-           "so the map fails honestly instead of quietly.")
+           "Works, loose, no power, with the time each state changed and the date each "
+           "socket was last checked. Loose is the common fault and the one a two-state map "
+           "hides.")
 
     heading(cell, "4. Report validation and reputation scoring")
     bullet(cell, "Corroboration threshold and daily cap.",
@@ -134,24 +131,21 @@ def fill_b1(cell):
            "account; reports that did not hold up lower it. A higher score makes one report "
            "worth more, which is the only reason to keep reporting accurately.")
 
-    heading(cell, "5. Role-based access and anonymity")
+    heading(cell, "5. Role-based access")
     bullet(cell, "Role separation enforced by the service.",
            "Students report and read; staff close. The check is in the service, not in the "
            "interface, and an account is a role, not a person.")
-    bullet(cell, "No identity exposed in any view.",
-           "A report shows a count of distinct accounts and a timestamp. No name, no device, "
-           "no history of one student's movements.")
 
 
 def fill_b2(cell):
-    """The function: what a student does, what staff do, what we test, where we stop."""
+    """The function: the two sides, the loop, and how the frontend is built."""
     clear(cell)
     label(cell, "Chairperson", "Haoran Liu")
     p = cell.add_paragraph()
     run(p, "Details", 12, True)
     run(p, " :  ", 12)
-    body(cell, "Function layer: the steps a student and a facilities member perform, in order, and "
-               "the boundary of the implemented scope.")
+    body(cell, "Function layer: the steps a student and a facilities member perform, the loop "
+               "that connects them, and how the frontend implements both.")
 
     heading(cell, "1. Student-facing navigation and reporting")
     bullet(cell, "Three-level navigation, list and plan together.",
@@ -171,13 +165,42 @@ def fill_b2(cell):
            "Marking a repair sets the socket to repaired, stamps the time, and the room page "
            "shows the new state at once, which is what closes the loop.")
 
-    heading(cell, "3. End-to-end validation")
-    bullet(cell, "Full cycle validated end to end.",
-           "Two accounts reporting the same socket, the socket entering the queue, a repair "
-           "closing it, and the room page showing the new state. Unit tests cover the state "
-           "rules; the demonstration is the running system, not slides.")
+    heading(cell, "3. The loop, end to end")
+    bullet(cell, "Four steps, one direction.",
+           "A student reports what he sees; the socket enters the staff queue once a second "
+           "account agrees; staff repair and close it; the state and its timestamp change, "
+           "and the next student reads the corrected record before choosing a seat. Nothing "
+           "in the loop is edited by hand on the side.")
+    bullet(cell, "Why it repeats.",
+           "Each closed repair is also evidence that the report behind it was right, which "
+           "is what the reputation score is built from; the score weights the next report, "
+           "and the next report is what keeps the record usable. The queue is the pump: "
+           "without a closure, the loop stalls at step three.")
 
-    heading(cell, "4. Scope boundary")
+    heading(cell, "4. Frontend implementation")
+    bullet(cell, "One application, three roles.",
+           "A Vue 3 single-page application built with Vite, routed with vue-router: the "
+           "building list, the room view, the report form, the maintenance queue and the "
+           "sign-in screen are separate views over the same API.")
+    bullet(cell, "One API client.",
+           "Every screen reads and writes through a single module whose base URL is /api, so "
+           "development runs behind the Vite proxy and production behind nginx without a "
+           "second code path.")
+    bullet(cell, "The plan is drawn, not photographed.",
+           "RoomMap renders an inline SVG from the seat and socket coordinates in the "
+           "database: outline, desks, and one colour block per socket labelled with the last "
+           "four digits of its number. No image assets to keep in step with the data, and "
+           "the labels stay legible at any zoom.")
+    bullet(cell, "Three languages, one dictionary each.",
+           "English, simplified and traditional Chinese ship as separate dictionaries with "
+           "the same keys; the switch sits in the header and the choice persists, so a "
+           "screen never mixes two languages.")
+    bullet(cell, "Layout rules.",
+           "The five states are CSS variables rather than hard-coded colours; the header is "
+           "fixed and the content column is allowed to shrink, so a narrow laptop window "
+           "scrolls the table instead of the page.")
+
+    heading(cell, "5. Scope boundary")
     bullet(cell, "Explicitly out of scope.",
            "No photo evidence and no push notification: the queue is a page staff open, not "
            "a message they receive. Both are written down as the next iteration rather than "
