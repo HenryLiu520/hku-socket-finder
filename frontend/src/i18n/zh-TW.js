@@ -88,7 +88,7 @@ export default {
     actLoose: '鬆動',
     actNoPower: '沒電',
     alreadyReported: '你今天已經上報過這個插座了，謝謝。',
-    sentPending: '已記錄。還需要另一位學生在 24 小時內確認，狀態才會改變。',
+    sentPending: '已記錄。支持這一狀態的證據權重達到門檻後，狀態才會改變。',
     sentFlipped: '已確認，狀態現在是{state}。'
   },
   map: {
@@ -121,7 +121,7 @@ export default {
     summary: '{code} · 座位 {seat} · 目前{state}',
     submit: '提交上報',
     quota: '每個插座每天一次，每天最多十次。',
-    sentPending: '已記錄。還需要另一位學生在 24 小時內確認。',
+    sentPending: '已記錄。支持這一狀態的證據權重達到門檻後，狀態才會改變。',
     sentFlipped: '已確認，狀態現在是{state}。'
   },
   maint: {

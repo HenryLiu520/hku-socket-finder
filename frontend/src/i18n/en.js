@@ -89,7 +89,7 @@ export default {
     actLoose: 'Loose',
     actNoPower: 'No power',
     alreadyReported: 'You already reported this socket today. Thanks.',
-    sentPending: 'Recorded. One more report from another student within 24 hours will change the state.',
+    sentPending: 'Recorded. The state changes once the weight of the reports behind it clears the threshold.',
     sentFlipped: 'Confirmed. The state is now {state}.'
   },
   map: {
@@ -122,7 +122,7 @@ export default {
     summary: '{code} · seat {seat} · now {state}',
     submit: 'Send report',
     quota: 'One report per socket per day, ten a day in total.',
-    sentPending: 'Recorded. One more report from another student within 24 hours will change the state.',
+    sentPending: 'Recorded. The state changes once the weight of the reports behind it clears the threshold.',
     sentFlipped: 'Confirmed. The state is now {state}.'
   },
   maint: {
