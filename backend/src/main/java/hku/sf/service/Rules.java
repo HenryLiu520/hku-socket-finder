@@ -84,6 +84,24 @@ public final class Rules {
         return best;
     }
 
+    /** What a repair does to one report: confirms it, refutes it, or leaves it alone. */
+    public enum Settlement { CONFIRM, REFUTE, LEAVE }
+
+    /**
+     * A repair judges the reports that named the fault it fixed. A report of "works" is not
+     * punished by a later fault, because the socket may simply have broken after it was
+     * checked; it stays unsettled rather than becoming a black mark.
+     */
+    public static Settlement settlementFor(SocketState reported, SocketState closed) {
+        if (reported == closed) return Settlement.CONFIRM;
+        boolean reportedFault = reported == SocketState.LOOSE || reported == SocketState.NO_POWER
+                || reported == SocketState.BROKEN;
+        boolean closedFault = closed == SocketState.LOOSE || closed == SocketState.NO_POWER
+                || closed == SocketState.BROKEN;
+        if (reportedFault && closedFault) return Settlement.REFUTE;   // named the wrong fault
+        return Settlement.LEAVE;
+    }
+
     /** One report per account per socket per window. */
     public static boolean alreadyReported(LocalDateTime lastReportAt, LocalDateTime now, int windowHours) {
         if (lastReportAt == null) return false;

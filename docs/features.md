@@ -28,7 +28,7 @@ Two roles, one build. A student finds a room, reads the state of each socket and
 - **Notifications.** Nothing emails or pushes, because the loop works on the next visit rather than on an alert.
 - **Self sign-up.** Accounts are seeded so that every report already has an owner whose weight can move.
 - **Comments and threads.** A state, a count and a date are what the next reader needs at the desk.
-- **Badges and vouchers.** They appear on the poster; no code issues one.
+- **Badges.** Counted in confirmed reports and shown on `/me` and the handset's fourth tab: 1, 5, 10 and 25. **Vouchers** are not issued by any code; only the badge tiers exist.
 - **Offline mode and editing.** A socket's code is written once by migration and never edited in the interface.
 
 ## Rows that need the seed

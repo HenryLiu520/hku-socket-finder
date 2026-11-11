@@ -27,7 +27,7 @@ docker compose up --build -d
 docker compose ps
 ```
 
-第一次啟動會發生什麼：`db` 起來並通過 `pg_isready` 健康檢查；`backend` 等它就緒後跑 Flyway 遷移（9 張表）並預置三個示範帳號；`frontend` 起 nginx，把 `/api` 轉給後端。
+第一次啟動會發生什麼：`db` 起來並通過 `pg_isready` 健康檢查；`backend` 等它就緒後跑 Flyway 遷移（8 張表）並預置三個示範帳號；`frontend` 起 nginx，把 `/api` 轉給後端。
 
 ## 確認部署成功
 

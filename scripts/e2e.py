@@ -44,16 +44,16 @@ code, room = call("GET", f"/rooms/{room_id}", token=t1)
 first_socket = room["seats"][0]["sockets"][0]
 print(f"   {room['code']} {room['name']}: {len(room['seats'])} 个座位, 第一个插座 state={first_socket['state']}")
 
-print("4. 学生 A 报坏（应只保存，不翻转）")
-code, res = call("POST", f"/sockets/{first_socket['id']}/report", {"state": "BROKEN"}, t1)
+print("4. 学生 A 报「没电」（应只保存，不翻转）")
+code, res = call("POST", f"/sockets/{first_socket['id']}/report", {"state": "NO_POWER"}, t1)
 print(f"   HTTP {code}: flipped={res['flipped']}, state={res['socket']['state']}, msg={res['message']}")
 
 print("5. 同一人再报（应被 24h 限频挡住）")
-code, res = call("POST", f"/sockets/{first_socket['id']}/report", {"state": "BROKEN"}, t1)
+code, res = call("POST", f"/sockets/{first_socket['id']}/report", {"state": "NO_POWER"}, t1)
 print(f"   HTTP {code}: {res}")
 
-print("6. 学生 B 也报坏（第二个独立账户 → 应翻转）")
-code, res = call("POST", f"/sockets/{first_socket['id']}/report", {"state": "BROKEN"}, t2)
+print("6. 学生 B 也报「没电」（第二个独立账户 → 应翻转）")
+code, res = call("POST", f"/sockets/{first_socket['id']}/report", {"state": "NO_POWER"}, t2)
 print(f"   HTTP {code}: flipped={res['flipped']}, state={res['socket']['state']}, msg={res['message']}")
 
 print("7. 维护端队列（应看到刚报坏的插座）")
@@ -73,3 +73,14 @@ code, room = call("GET", f"/rooms/{room_id}", token=t1)
 s = room["seats"][0]["sockets"][0]
 print(f"   state={s['state']}, stale={s['stale']}, myReportsToday={s['myReportsToday']}")
 print("\n全部步骤跑完")
+
+print("9. 维护端关闭维修，结算窗口内的上报")
+code, _ = call("POST", f"/sockets/{first_socket['id']}/repair", {"note": "e2e"}, t3)
+print(f"   HTTP {code}")
+before = None
+code, me1 = call("GET", "/auth/me", token=t1)
+code, me2 = call("GET", "/auth/me", token=t2)
+print(f"   A confirmed={me1['confirmed']} refuted={me1['refuted']} score={me1['score']:.3f}")
+print(f"   B confirmed={me2['confirmed']} refuted={me2['refuted']} score={me2['score']:.3f}")
+assert me1["confirmed"] >= 1 and me2["confirmed"] >= 1, "settlement did not credit both reporters"
+print("   OK  结算生效：两个上报者各被证实一次")

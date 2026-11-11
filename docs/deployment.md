@@ -27,7 +27,7 @@ docker compose up --build -d
 docker compose ps
 ```
 
-What happens on the first boot: `db` starts and passes its `pg_isready` healthcheck, `backend` waits for that and then runs the Flyway migrations (9 tables) and seeds the three demo accounts, `frontend` serves the built files and forwards `/api` to the backend.
+What happens on the first boot: `db` starts and passes its `pg_isready` healthcheck, `backend` waits for that and then runs the Flyway migrations (8 tables) and seeds the three demo accounts, `frontend` serves the built files and forwards `/api` to the backend.
 
 ## Check that it worked
 

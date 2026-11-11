@@ -34,7 +34,7 @@ One build, two roles. The front end hides what a role cannot use; the API refuse
 
 | Table | Fields that matter | Why it exists |
 |---|---|---|
-| `account` | email, password hash, role | Two roles only: `STUDENT`, `MAINTENANCE` |
+| `account` | email, password hash, role, `confirmed`, `refuted` | Two roles only: `STUDENT`, `MAINTENANCE`; the two counters are the reputation record |
 | `building` | code, name | One row per building |
 | `floor` | building, level | A floor belongs to a building |
 | `room` | code, floor, name | Room code is what students say out loud |
@@ -181,11 +181,11 @@ them; this build does not, because the seed coordinates are a single row per roo
 - Login has no rate limit.
 - The rooms and sockets are hand-typed sample data for one floor.
 - Photo evidence, notifications, offline mode and push are not built.
-- Badges and vouchers are specified on the poster but nothing issues them yet.
+- Badges are implemented (1/5/10/25 confirmed reports, shown on `/me`); vouchers are not issued by any code.
 - A socket can be reported by many accounts; the evidence sum stops at the three heaviest, so a crowd beyond that adds nothing.
 
 ## 9. Where this goes next
 
 The loop only stays alive while people keep reporting, so the next steps are the ones that make
-reporting cheaper and the data more visible: a floor plan per level, a phone layout, and a way for
+reporting cheaper and the data more visible: a floor plan per level, and a way for
 maintenance to see the same record they already keep.

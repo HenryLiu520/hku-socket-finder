@@ -1,6 +1,7 @@
 package hku.sf.service;
 
 import hku.sf.domain.*;
+import hku.sf.domain.Report;
 import hku.sf.repo.AccountRepository;
 import hku.sf.repo.ReportRepository;
 import hku.sf.repo.RepairRepository;
@@ -73,6 +74,7 @@ public class SocketService {
             throw new ApiException("DAILY_CAP", "That is " + reportsPerDay + " reports today, come back tomorrow", 429);
         }
 
+        s.lastCheckedAt = now;          // a report is a check, even when the state does not move
         Report r = new Report();
         r.socket = s;
         r.account = account;
@@ -91,7 +93,10 @@ public class SocketService {
         }
 
         double behindThisState = evidence.getOrDefault(state, java.util.List.of()).stream()
-                .mapToDouble(Double::doubleValue).sum();
+                .sorted(java.util.Comparator.reverseOrder())
+                .limit(Rules.TOP_ACCOUNTS)
+                .mapToDouble(Double::doubleValue)
+                .sum();
         String message = flipped
                 ? "State changed to " + winner.name().toLowerCase()
                 : String.format(java.util.Locale.ROOT,
@@ -141,11 +146,13 @@ public class SocketService {
         if (s.state != SocketState.LOOSE && s.state != SocketState.NO_POWER && s.state != SocketState.BROKEN) {
             return;
         }
-        for (Object[] row : reports.lastReportPerAccount(s.id, now.minusHours(evidenceWindowHours))) {
-            Long accountId = ((Number) row[0]).longValue();
-            SocketState reported = SocketState.valueOf((String) row[1]);
-            accounts.findById(accountId).ifPresent(a -> {
-                if (reported == s.state) a.confirmed++; else a.refuted++;
+        for (Report r : reports.unsettled(s.id, now.minusHours(evidenceWindowHours))) {
+            Rules.Settlement verdict = Rules.settlementFor(r.reportedState, s.state);
+            r.settledAt = now;                       // judged once, and it stops being evidence
+            reports.save(r);
+            if (verdict == Rules.Settlement.LEAVE) continue;
+            accounts.findById(r.account.id).ifPresent(a -> {
+                if (verdict == Rules.Settlement.CONFIRM) a.confirmed++; else a.refuted++;
                 accounts.save(a);
             });
         }

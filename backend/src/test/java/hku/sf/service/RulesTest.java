@@ -1,5 +1,6 @@
 package hku.sf.service;
 
+import hku.sf.domain.SocketState;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -99,5 +100,14 @@ class RulesTest {
                 hku.sf.domain.SocketState.class);
         light.put(hku.sf.domain.SocketState.WORKING, java.util.List.of(0.5, 0.5));
         assertNull(Rules.winningState(light));
+    }
+
+    @Test
+    void aRepairJudgesOnlyTheReportsThatNamedItsFault() {
+        assertEquals(Rules.Settlement.CONFIRM, Rules.settlementFor(SocketState.LOOSE, SocketState.LOOSE));
+        assertEquals(Rules.Settlement.REFUTE, Rules.settlementFor(SocketState.NO_POWER, SocketState.LOOSE));
+        // an honest "works" is not punished by a fault found later
+        assertEquals(Rules.Settlement.LEAVE, Rules.settlementFor(SocketState.WORKING, SocketState.LOOSE));
+        assertEquals(Rules.Settlement.LEAVE, Rules.settlementFor(SocketState.REPAIRED, SocketState.NO_POWER));
     }
 }

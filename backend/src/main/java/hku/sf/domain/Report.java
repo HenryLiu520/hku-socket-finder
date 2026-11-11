@@ -11,4 +11,7 @@ public class Report {
     @ManyToOne @JoinColumn(name = "account_id", nullable = false) public Account account;
     @Enumerated(EnumType.STRING) @Column(name = "reported_state", nullable = false) public SocketState reportedState;
     @Column(name = "created_at", nullable = false) public LocalDateTime createdAt = LocalDateTime.now();
+
+    /** Set once, when a repair confirms or refutes this report; a settled row stops being evidence. */
+    @Column(name = "settled_at") public LocalDateTime settledAt;
 }

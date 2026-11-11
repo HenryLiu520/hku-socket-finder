@@ -39,7 +39,7 @@ about, so it has to be the same thing everywhere.
 
 The room picker: four buildings, the rooms under them, and for each room the counts of working, loose, dead
 and unchecked sockets. One click and a stranger is looking at a specific room, on a specific floor, with a
-specific socket coloured red — no sign-in wall, no setup, no explanation needed.
+specific socket coloured red — one click on a demo account chip, no setup, no explanation needed.
 
 ---
 

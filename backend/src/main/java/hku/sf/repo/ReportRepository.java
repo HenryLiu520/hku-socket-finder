@@ -21,6 +21,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
            select distinct on (r.account_id) r.account_id, r.reported_state, r.created_at
              from report r
             where r.socket_id = :socketId and r.created_at > :since
+              and r.settled_at is null
             order by r.account_id, r.created_at desc
            """, nativeQuery = true)
     java.util.List<Object[]> lastReportPerAccount(@Param("socketId") Long socketId,
@@ -32,6 +33,15 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
            group by r.socket.id
            """)
     java.util.List<Object[]> lastReportTimes(@Param("socketIds") java.util.List<Long> socketIds);
+
+    /** Rows a repair may still judge: inside the window and never settled before. */
+    @Query("""
+           select r from Report r
+           where r.socket.id = :socketId and r.createdAt > :since and r.settledAt is null
+           order by r.createdAt desc
+           """)
+    java.util.List<hku.sf.domain.Report> unsettled(@Param("socketId") Long socketId,
+                                                   @Param("since") LocalDateTime since);
 
     @Query("""
            select count(distinct r.account.id) from Report r
