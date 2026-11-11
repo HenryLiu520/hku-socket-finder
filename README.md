@@ -72,9 +72,10 @@ On a phone the same screens reflow into one column — the plan first, because t
 
 Crowd-sourced data is worth exactly as much as its resistance to being wrong, so the rules are few, visible and enforced where they cannot be argued with.
 
-- **Two different accounts flip a socket.** Same state, within 24 hours. A single report is stored and shown as unconfirmed, with the count of how many more are needed.
-- **One report per account per socket per day, ten per account per day.** The first rule stops one person changing a socket alone; the second stops one person sweeping a whole floor in an hour. Both answer HTTP 429 when they bite.
+- **A socket flips on weighted evidence, not a headcount.** Every account carries a weight from its record, 0.5 to 1.5, and the weights behind one state must add up to 1.6 and lead any rival by half again, counting the three heaviest accounts in the last 72 hours. Two fresh accounts (1.0 + 1.0) clear it; one expert, capped at 1.5, never can on their own.
+- **One report per account per socket per day, ten per account per day.** The first stops one person stacking evidence on a single socket; the second stops one person sweeping a whole floor in an hour. Both answer HTTP 429 when they bite.
 - **Old checks are labelled old.** Past 30 days a check is flagged in the interface until somebody looks again, and nothing is silently presented as fresh.
+- **The score moves only when a repair settles a report.** A repair that agrees with what was reported adds to that account's confirmed count, one that disagrees adds to refuted; the score is confirmed over settled, held near 0.5 for a new account by a prior. Nothing else moves it, so filing more reports earns nothing.
 - **Only maintenance can close a fault.** A repair sets the state to repaired and stamps the time; that stamp is what the next student reads.
 - **Every row carries a timestamp**, so "2 days ago" and "never" are facts the app can stand behind rather than a vague assurance.
 - **The rules live server-side.** The UI cannot grant itself a second report, a role, or a state change; it only renders what the API returns.
@@ -85,11 +86,11 @@ What that leaves as known limits, said plainly: tokens live in memory, so restar
 
 Three processes and one database, all of them ordinary, because the interesting part of this product is the record and not the plumbing.
 
-- **Backend** — Spring Boot 4.1 on Java 21, Spring Data JPA, Flyway migrations V1–V7, PostgreSQL 17. The rules are pure functions in `Rules.java`, kept out of the services so they can be tested without a database.
+- **Backend** — Spring Boot 4.1 on Java 21, Spring Data JPA, Flyway migrations V1–V8, PostgreSQL 17. The rules are pure functions in `Rules.java`, kept out of the services so they can be tested without a database.
 - **Frontend** — Vue 3 with Vite and Element Plus, one build serving both roles; the room plan is a small SVG component, not a screenshot of a floor.
 - **Serving** — the production image puts the Vue build behind nginx, which serves the app and proxies `/api` to the backend, so the browser sees one origin and CORS never comes into it.
 - **Auth** — email and password, BCrypt hashes, a token held in memory, and the role checked on every write in the controller rather than in the view.
-- **Data path** — a report appends a row and then counts distinct accounts for that socket in the window; the socket row itself only moves when the count is satisfied. History is never overwritten.
+- **Data path** — a report appends a row, then the service sums the weights of the accounts behind each candidate state over the last 72 hours; the socket row only moves when one state clears 1.6 and leads its rival. A repair settles every report in that window, which is what moves the scores. History is never overwritten.
 
 ## What is in the box
 
@@ -132,7 +133,7 @@ Password for all three accounts is `demo1234`:
 | Email | Role | Why it exists |
 |---|---|---|
 | student1@connect.hku.hk | student | first reporter |
-| student2@connect.hku.hk | student | second reporter — the one that flips a socket |
+| student2@connect.hku.hk | student | second reporter — two accounts clear the 1.6 threshold, one cannot |
 | estates@hku.hk | maintenance | sees the repair queue |
 
 Ports and credentials are environment variables with working defaults: `SF_DB_URL`, `SF_DB_USER`, `SF_DB_PASSWORD`, `SF_BIND`, `SF_PORT`, `SF_WEB_PORT`, `SF_REPORTS_NEEDED`, `SF_REPORTS_PER_DAY`.

@@ -1,5 +1,7 @@
 package hku.sf.service;
 
+import hku.sf.domain.SocketState;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -31,6 +33,55 @@ public final class Rules {
      */
     public static boolean overDailyQuota(long reportsToday, int cap) {
         return reportsToday >= cap;
+    }
+
+    /**
+     * Reputation is an error rate with a prior, not a count: a new account sits at 0.5,
+     * and only settled reports move it. Beta(2.5, 2.5) is the prior behind the formula.
+     */
+    public static double score(int confirmed, int refuted) {
+        return (confirmed + 2.5) / (confirmed + refuted + 5.0);
+    }
+
+    /** What one report is worth: 0.5 to 1.5, neutral at 1.0 for a new account. */
+    public static double weight(int confirmed, int refuted) {
+        return 0.5 + score(confirmed, refuted);
+    }
+
+    /** Evidence needed before a state can take hold, and how far it must lead the rival. */
+    public static final double EVIDENCE_THRESHOLD = 1.6;
+    public static final double DOMINANCE = 1.5;
+    public static final int TOP_ACCOUNTS = 3;
+
+    /**
+     * Sum the heaviest weights behind each candidate state, then pick a winner: it must
+     * clear the threshold and lead every rival by half again. Because the ceiling is 1.5,
+     * no single account can ever win alone, however good its record.
+     */
+    public static SocketState winningState(java.util.Map<SocketState, java.util.List<Double>> byState) {
+        java.util.Map<SocketState, Double> sums = new java.util.EnumMap<>(SocketState.class);
+        for (var e : byState.entrySet()) {
+            double sum = e.getValue().stream()
+                    .sorted(java.util.Comparator.reverseOrder())
+                    .limit(TOP_ACCOUNTS)
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
+            sums.put(e.getKey(), sum);
+        }
+        SocketState best = null;
+        double bestSum = 0, second = 0;
+        for (var e : sums.entrySet()) {
+            if (e.getValue() > bestSum) {
+                second = bestSum;
+                bestSum = e.getValue();
+                best = e.getKey();
+            } else if (e.getValue() > second) {
+                second = e.getValue();
+            }
+        }
+        if (best == null || bestSum < EVIDENCE_THRESHOLD) return null;
+        if (bestSum < DOMINANCE * second) return null;      // a disputed socket keeps its state
+        return best;
     }
 
     /** One report per account per socket per window. */

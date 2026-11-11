@@ -12,4 +12,7 @@ public class Account {
     @Enumerated(EnumType.STRING) @Column(nullable = false) public Role role;
     @Column(name = "password_hash", nullable = false) public String passwordHash;
     @Column(name = "created_at", nullable = false) public LocalDateTime createdAt = LocalDateTime.now();
+    /** Settled reports: a repair agreed with the report, or contradicted it. */
+    @Column(nullable = false) public int confirmed = 0;
+    @Column(nullable = false) public int refuted = 0;
 }

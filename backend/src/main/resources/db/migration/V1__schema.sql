@@ -1,4 +1,4 @@
--- V1: schema for Sure Socket (CCST9003 R21)
+-- V1: schema for Socket Finder (CCST9003 R21)
 -- one row per socket, not per room: that is the unit of the whole design
 
 CREATE TABLE account (

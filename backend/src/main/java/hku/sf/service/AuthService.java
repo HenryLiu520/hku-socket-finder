@@ -47,6 +47,11 @@ public class AuthService {
         return Optional.of(s.account());
     }
 
+    /** The session holds the account as it was at sign-in; scores move afterwards. */
+    public Account fresh(Account cached) {
+        return accounts.findById(cached.id).orElse(cached);
+    }
+
     public void logout(String header) {
         String token = token(header);
         if (token != null) sessions.remove(token);

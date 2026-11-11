@@ -31,7 +31,10 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> me(@RequestHeader(value = "Authorization", required = false) String header) {
         return auth.resolve(header)
-                .map(a -> ResponseEntity.ok((Object) new Dtos.MeResponse(a.id, a.email, a.displayName, a.role.name())))
+                .map(auth::fresh)
+                .map(a -> ResponseEntity.ok((Object) new Dtos.MeResponse(a.id, a.email, a.displayName,
+                        a.role.name(), hku.sf.service.Rules.score(a.confirmed, a.refuted),
+                        hku.sf.service.Rules.weight(a.confirmed, a.refuted), a.confirmed, a.refuted)))
                 .orElseGet(() -> ResponseEntity.status(401).body(new Dtos.ApiError("UNAUTHORISED", "Sign in first")));
     }
 

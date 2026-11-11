@@ -4,6 +4,7 @@
 
 BEGIN;
 
+UPDATE account SET confirmed = 0, refuted = 0;
 DELETE FROM repair;
 DELETE FROM report;
 

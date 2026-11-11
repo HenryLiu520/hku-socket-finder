@@ -7,7 +7,8 @@ public final class Dtos {
 
     public record LoginRequest(String email, String password) { }
     public record LoginResponse(String token, String email, String displayName, String role) { }
-    public record MeResponse(Long id, String email, String displayName, String role) { }
+    public record MeResponse(Long id, String email, String displayName, String role,
+                             double score, double weight, int confirmed, int refuted) { }
     public record ApiError(String code, String message) { }
 
     public record DemoAccount(String email, String password, String displayName, String role, String note) { }

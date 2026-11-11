@@ -112,7 +112,8 @@ erDiagram
 
 | Rule | Where it lives | Behaviour |
 |---|---|---|
-| Two reports to flip | `SocketService.report` | Two **different** accounts, same state, within 24 hours |
+| Weighted evidence to flip | `SocketService.report` | Sum the weights of the three heaviest accounts behind each state over 72 hours; a state wins at ≥ 1.6 and ≥ 1.5× its rival |
+| Score from settled reports | `Rules.score`, `SocketService.settle` | `(confirmed + 2.5) / (settled + 5)`, weight `0.5 + score`; a repair confirms or refutes every report in the window |
 | One report per socket per day | `SocketService.report` | Same account, same socket, second attempt returns HTTP 429 |
 | Ten reports per day | `SocketService.report` | Same account, eleventh socket of the day returns HTTP 429 `DAILY_CAP` |
 | Old checks look old | `Rules.isStale` | More than 30 days since the last check is flagged, never silently trusted |
@@ -134,7 +135,7 @@ sequenceDiagram
     API->>DB: insert report
     API-->>A: saved, one more report needed
     B->>API: POST /api/sockets/12/report {BROKEN}
-    API->>DB: count distinct accounts in 24h
+    API->>DB: sum weights behind each state in 72h
     API->>DB: update socket to BROKEN
     API-->>B: flipped
     S->>API: GET /api/maintenance/queue
@@ -164,9 +165,9 @@ them; this build does not, because the seed coordinates are a single row per roo
 | State | Set by | Meaning |
 |---|---|---|
 | `UNKNOWN` | seed data | nobody has checked this socket |
-| `WORKING` | two reports | two students confirm it charges |
-| `LOOSE` | two reports | two students say the plug wobbles |
-| `NO_POWER` | two reports | two students say nothing comes out |
+| `WORKING` | evidence ≥ 1.6 | the weights behind it clear 1.6 and lead any rival |
+| `LOOSE` | evidence ≥ 1.6 | the same rule, for a plug that wobbles |
+| `NO_POWER` | evidence ≥ 1.6 | the same rule, for a socket that is dead |
 | `BROKEN` | none any more | the older word, kept so old rows still read correctly |
 | `REPAIRED` | maintenance | staff fixed it, nobody has confirmed yet |
 
@@ -176,7 +177,9 @@ them; this build does not, because the seed coordinates are a single row per roo
 - Accounts are seeded, and nothing proves the account belongs to a HKU student.
 - Login has no rate limit.
 - The rooms and sockets are hand-typed sample data for one floor.
-- Photos, notifications, offline mode and floor plans are not built.
+- Photo evidence, notifications, offline mode and push are not built.
+- Badges and vouchers are specified on the poster but nothing issues them yet.
+- A socket can be reported by many accounts; the evidence sum stops at the three heaviest, so a crowd beyond that adds nothing.
 
 ## 9. Where this goes next
 
